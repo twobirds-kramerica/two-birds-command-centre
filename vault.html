@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Artifact Vault — Two Birds</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"     class="nav-link">Dashboard</a>
+      <a href="vault.html"     class="nav-link active">Vault</a>
+      <a href="inbox.html"     class="nav-link">Inbox</a>
+      <a href="decisions.html" class="nav-link">Decisions</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <div class="page-title">
+      <h1>Artifact Vault</h1>
+      <p>Strategy docs, session outputs, research, and decision logs — with trust decay monitoring.</p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap" role="search">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="vault-search"
+        placeholder="Search vault by title, tag, project…"
+        aria-label="Search vault"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+
+    <!-- Category tabs -->
+    <div class="category-tabs" role="tablist" aria-label="Filter by category">
+      <button class="cat-tab active" data-cat="all" role="tab">All</button>
+      <button class="cat-tab" data-cat="strategy" role="tab">📊 Strategy</button>
+      <button class="cat-tab" data-cat="session"  role="tab">💡 Sessions</button>
+      <button class="cat-tab" data-cat="research" role="tab">🔬 Research</button>
+      <button class="cat-tab" data-cat="decision" role="tab">⚖️ Decisions</button>
+    </div>
+
+    <!-- Vault file list -->
+    <div id="vault-list" class="file-list" aria-live="polite">
+      <div class="empty-state"><div class="empty-icon">⏳</div>Loading vault…</div>
+    </div>
+
+    <!-- Markdown viewer pane -->
+    <div id="md-viewer" class="md-viewer" aria-label="Document viewer">
+      <button class="md-viewer-close" id="md-close">✕ Close</button>
+      <div id="md-content" class="md-content"></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/decay.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    let allFiles      = [];
+    let currentCat    = 'all';
+
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function renderList(files) {
+      const list = document.getElementById('vault-list');
+      if (!files.length) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>No files match this filter.</div>';
+        return;
+      }
+      list.innerHTML = files.map(f => {
+        const decay  = Decay.assess(f.reviewBy);
+        const tags   = (f.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+        const catIcon = {strategy:'📊', session:'💡', research:'🔬', decision:'⚖️'}[f.category] || '📄';
+
+        return `
+<div class="file-card" data-path="${esc(f.path)}" tabindex="0" role="button"
+     aria-label="Open ${esc(f.title)}" title="Click to read">
+  <div class="file-card-header">
+    <span class="file-title">${catIcon} ${esc(f.title)}</span>
+    <span class="badge trust-${decay.level}">${decay.label}</span>
+  </div>
+  <div class="file-meta">
+    <span>${f.date || ''}</span>
+    <span>${esc(f.project || '')}</span>
+    <span>${esc(f.category || '')}</span>
+  </div>
+  ${tags ? `<div class="file-tags">${tags}</div>` : ''}
+</div>`;
+      }).join('');
+
+      // Wire click/enter to open
+      list.querySelectorAll('.file-card').forEach(card => {
+        const open = () => openFile(card.dataset.path);
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(); });
+      });
+    }
+
+    async function openFile(path) {
+      const viewer  = document.getElementById('md-viewer');
+      const content = document.getElementById('md-content');
+      content.innerHTML = '<p style="color:var(--text-2)">Loading…</p>';
+      viewer.classList.add('open');
+      viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      try {
+        const res = await fetch(path);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        let text = await res.text();
+        // Strip YAML frontmatter
+        text = text.replace(/^---[\s\S]*?---\n/, '');
+        content.innerHTML = marked.parse(text);
+      } catch (e) {
+        content.innerHTML = `<p style="color:var(--s-blocked)">Could not load file: ${esc(path)}<br><small>${esc(e.message)}</small></p>`;
+      }
+    }
+
+    function applyView() {
+      let list = allFiles;
+      if (currentCat !== 'all') list = list.filter(f => f.category === currentCat);
+      list = Search.query(document.getElementById('vault-search').value);
+      if (currentCat !== 'all') list = list.filter(f => f.category === currentCat);
+      renderList(list);
+    }
+
+    async function init() {
+      let data;
+      try {
+        const res = await fetch('data/vault-index.json');
+        data = await res.json();
+      } catch (e) {
+        document.getElementById('vault-list').innerHTML =
+          '<div class="empty-state"><div class="empty-icon">⚠️</div>Could not load vault-index.json</div>';
+        return;
+      }
+
+      allFiles = data.files || [];
+
+      Search.init(allFiles, [
+        { name: 'title',    weight: 4 },
+        { name: 'tags',     weight: 2 },
+        { name: 'project',  weight: 2 },
+        { name: 'category', weight: 1 }
+      ]);
+
+      renderList(allFiles);
+
+      // Category tabs
+      document.querySelectorAll('.cat-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentCat = tab.dataset.cat;
+          applyView();
+        });
+      });
+
+      // Search
+      const searchEl = document.getElementById('vault-search');
+      if (searchEl) searchEl.addEventListener('input', applyView);
+
+      // Close viewer
+      document.getElementById('md-close').addEventListener('click', () => {
+        document.getElementById('md-viewer').classList.remove('open');
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>

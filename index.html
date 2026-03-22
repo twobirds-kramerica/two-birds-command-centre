@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Command Centre — Two Birds</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"     class="nav-link active">Dashboard</a>
+      <a href="vault.html"     class="nav-link">Vault</a>
+      <a href="inbox.html"     class="nav-link">Inbox</a>
+      <a href="decisions.html" class="nav-link">Decisions</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <div class="page-title">
+      <h1>Project Dashboard</h1>
+      <p>All Two Birds projects and epics — live status as of <span id="last-updated"></span></p>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar" aria-label="Summary stats">
+      <div class="stat-pill">Projects <strong id="stat-projects">—</strong></div>
+      <div class="stat-pill">Epics <strong id="stat-epics">—</strong></div>
+      <div class="stat-pill">Active projects <strong id="stat-active">—</strong></div>
+      <div class="stat-pill">Epics complete <strong id="stat-done">—</strong></div>
+      <div class="stat-pill">Epics in flight <strong id="stat-live">—</strong></div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap" role="search">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="search-input"
+        placeholder="Search projects, epics, descriptions…"
+        aria-label="Search projects"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar" role="group" aria-label="Filter by status">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="active">Active</button>
+      <button class="filter-btn" data-filter="planned">Planned</button>
+      <button class="filter-btn" data-filter="queued">Queued</button>
+      <button class="filter-btn" data-filter="deferred">Deferred</button>
+      <button class="filter-btn" data-filter="complete">Complete</button>
+      <button class="filter-btn" data-filter="parked">Parked</button>
+    </div>
+
+    <!-- Project grid -->
+    <div id="project-grid" class="project-grid" aria-live="polite">
+      <div class="empty-state"><div class="empty-icon">⏳</div>Loading projects…</div>
+    </div>
+
+    <!-- Infrastructure -->
+    <div class="infra-section">
+      <h2>Infrastructure</h2>
+      <div id="infra-grid" class="infra-grid"></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/decay.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    // Set last-updated from data file timestamp
+    fetch('data/projects.json')
+      .then(r => r.json())
+      .then(d => {
+        const el = document.getElementById('last-updated');
+        if (el && d.lastUpdated) el.textContent = d.lastUpdated;
+      }).catch(() => {});
+  </script>
+</body>
+</html>

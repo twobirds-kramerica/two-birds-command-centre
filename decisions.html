@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Decision Log — Two Birds</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"     class="nav-link">Dashboard</a>
+      <a href="vault.html"     class="nav-link">Vault</a>
+      <a href="inbox.html"     class="nav-link">Inbox</a>
+      <a href="decisions.html" class="nav-link active">Decisions</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <div class="page-title">
+      <h1>Decision Log</h1>
+      <p>Architecture, strategy, and product decisions — with rationale. Permanent record.</p>
+    </div>
+
+    <!-- Add decision form -->
+    <div class="decision-form">
+      <h2>Log a New Decision</h2>
+      <div class="form-row">
+        <div>
+          <label class="form-label" for="dec-decision">Decision *</label>
+          <input class="form-input" id="dec-decision" type="text" placeholder="What was decided?" required>
+        </div>
+        <div>
+          <label class="form-label" for="dec-project">Project</label>
+          <select class="form-select" id="dec-project">
+            <option value="global">Global</option>
+            <option value="dcc">Digital Confidence Centre</option>
+            <option value="command">Command Centre</option>
+            <option value="hal">HAL Stack</option>
+            <option value="p3">P3</option>
+            <option value="advisory">Advisory</option>
+            <option value="artifacts">Artifact Builder</option>
+            <option value="talent">Talent Link</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div>
+          <label class="form-label" for="dec-rationale">Rationale / Context</label>
+          <textarea class="form-textarea" id="dec-rationale"
+            placeholder="Why was this decision made? What alternatives were considered?"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" id="dec-save-btn">+ Log Decision</button>
+        <button class="btn btn-secondary" id="dec-export-btn">↓ Export as .md</button>
+        <span id="dec-feedback" style="font-size:0.82rem;color:var(--s-active)"></span>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap" role="search">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="dec-search"
+        placeholder="Search decisions…"
+        aria-label="Search decisions"
+        autocomplete="off">
+    </div>
+
+    <!-- Decision list -->
+    <div id="decision-list" class="file-list" aria-live="polite">
+      <div class="empty-state"><div class="empty-icon">⏳</div>Loading decisions…</div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="js/search.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    const STORAGE_KEY = 'tb_decisions';
+
+    // Seed decisions (from vault/decisions/2026-03-decision-log.md)
+    const SEED_DECISIONS = [
+      {
+        id: 'dec-001',
+        decision: 'No data monetisation — trust cost too high for senior audience',
+        rationale: 'Seniors are a particularly trust-sensitive demographic. The reputational cost of any data commerce far outweighs potential revenue at this stage. Privacy is a core brand promise.',
+        project: 'dcc',
+        date: '2026-03-01'
+      },
+      {
+        id: 'dec-002',
+        decision: 'Adult child is primary marketing channel, not the senior',
+        rationale: 'Seniors rarely self-discover digital literacy tools. The adult child (age 40-60) is the acquisition trigger — they find the product, set it up, and encourage use. All marketing should address them first.',
+        project: 'dcc',
+        date: '2026-03-01'
+      },
+      {
+        id: 'dec-003',
+        decision: 'B2B white-label licensing is the highest-ceiling revenue model',
+        rationale: 'Selling access to the platform to libraries, community centres, health networks, and care homes scales faster than individual user revenue. Deferred until 500+ users validates the product.',
+        project: 'dcc',
+        date: '2026-03-01'
+      },
+      {
+        id: 'dec-004',
+        decision: 'Non-profit / for-profit fork deferred until 500+ users',
+        rationale: 'The legal and structural cost of setting up a non-profit is not justified until we have evidence of user demand. Focus on product first.',
+        project: 'dcc',
+        date: '2026-03-01'
+      },
+      {
+        id: 'dec-005',
+        decision: 'AEO tools: start free, add Otterly AI at launch',
+        rationale: 'Free tools (Perplexity, ChatGPT self-search) are sufficient to validate AI visibility during development. Otterly AI ($49/mo) adds structured monitoring at launch milestone.',
+        project: 'dcc',
+        date: '2026-03-15'
+      },
+      {
+        id: 'dec-006',
+        decision: 'Static architecture maintained — no backend until SaaS phase',
+        rationale: 'GitHub Pages + Cloudflare meets all current needs at zero cost. Introducing a backend creates hosting costs, security surface, and operational overhead with no user-facing benefit until the SaaS licensing phase.',
+        project: 'global',
+        date: '2026-03-01'
+      },
+      {
+        id: 'dec-007',
+        decision: 'Option B archive trigger added to User Preferences globally',
+        rationale: 'The trigger phrase system (Archive This Session) for creating structured artifacts from Claude conversations is active across all projects as a session preference, not a technical dependency.',
+        project: 'artifacts',
+        date: '2026-03-10'
+      }
+    ];
+
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    const PROJECT_LABELS = {
+      global:    'Global',
+      dcc:       'Digital Confidence Centre',
+      command:   'Command Centre',
+      hal:       'HAL Stack',
+      p3:        'P3',
+      advisory:  'Advisory',
+      artifacts: 'Artifact Builder',
+      talent:    'Talent Link'
+    };
+
+    // ── Storage ──────────────────────────────────────────────────
+    function load() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        if (stored && Array.isArray(stored)) return stored;
+      } catch (e) {}
+      // First load — seed from constants
+      save(SEED_DECISIONS);
+      return SEED_DECISIONS;
+    }
+
+    function save(decisions) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions));
+      } catch (e) {}
+    }
+
+    // ── Render ────────────────────────────────────────────────────
+    function renderList(decisions) {
+      const list = document.getElementById('decision-list');
+      if (!decisions.length) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div>No decisions logged yet.</div>';
+        return;
+      }
+
+      // Reverse-chronological
+      const sorted = [...decisions].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+      list.innerHTML = sorted.map(d => `
+<div class="file-card" data-id="${esc(d.id)}">
+  <div class="file-card-header">
+    <span class="file-title">⚖️ ${esc(d.decision)}</span>
+    <span class="badge badge-active" style="white-space:nowrap">${esc(PROJECT_LABELS[d.project] || d.project)}</span>
+  </div>
+  ${d.rationale ? `<p style="font-size:0.85rem;color:var(--text-1);margin-top:0.5rem;line-height:1.5">${esc(d.rationale)}</p>` : ''}
+  <div class="file-meta" style="margin-top:0.4rem">
+    <span>${esc(d.date || '')}</span>
+    <button class="btn btn-danger" style="padding:0.15rem 0.5rem;font-size:0.72rem" data-delete="${esc(d.id)}">Delete</button>
+  </div>
+</div>`).join('');
+
+      // Wire delete buttons
+      list.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const id = btn.dataset.delete;
+          if (!confirm('Delete this decision?')) return;
+          const updated = load().filter(d => d.id !== id);
+          save(updated);
+          applyView();
+        });
+      });
+    }
+
+    let allDecisions = [];
+
+    function applyView() {
+      allDecisions = load();
+      const q = document.getElementById('dec-search').value.trim();
+      const filtered = q ? Search.query(q) : allDecisions;
+      renderList(filtered);
+    }
+
+    // ── Add new decision ─────────────────────────────────────────
+    document.getElementById('dec-save-btn').addEventListener('click', () => {
+      const decEl  = document.getElementById('dec-decision');
+      const ratEl  = document.getElementById('dec-rationale');
+      const projEl = document.getElementById('dec-project');
+      const fb     = document.getElementById('dec-feedback');
+
+      const text = decEl.value.trim();
+      if (!text) { decEl.focus(); return; }
+
+      const decisions = load();
+      const newDec = {
+        id:         'dec-' + Date.now(),
+        decision:   text,
+        rationale:  ratEl.value.trim(),
+        project:    projEl.value,
+        date:       new Date().toISOString().slice(0, 10)
+      };
+      decisions.unshift(newDec);
+      save(decisions);
+
+      decEl.value = '';
+      ratEl.value = '';
+      fb.textContent = '✓ Decision logged';
+      setTimeout(() => { fb.textContent = ''; }, 2500);
+      applyView();
+    });
+
+    // ── Export as .md ────────────────────────────────────────────
+    document.getElementById('dec-export-btn').addEventListener('click', () => {
+      const decisions = load();
+      const sorted = [...decisions].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      const md = `---
+title: "Decision Log Export"
+date: "${new Date().toISOString().slice(0,10)}"
+category: decision
+project: global
+trust: permanent
+review-by: "never"
+---
+
+# Two Birds — Decision Log
+*Exported: ${new Date().toISOString().slice(0,10)}*
+
+${sorted.map(d => `## ${d.date || 'Undated'} — ${d.decision}
+
+**Project:** ${PROJECT_LABELS[d.project] || d.project}
+
+${d.rationale || '_No rationale recorded._'}
+
+---`).join('\n\n')}
+`;
+      const blob = new Blob([md], { type: 'text/markdown' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `decisions-export-${new Date().toISOString().slice(0,10)}.md`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // ── Init ──────────────────────────────────────────────────────
+    function init() {
+      allDecisions = load();
+      Search.init(allDecisions, [
+        { name: 'decision',  weight: 4 },
+        { name: 'rationale', weight: 2 },
+        { name: 'project',   weight: 1 }
+      ]);
+      renderList(allDecisions);
+
+      document.getElementById('dec-search').addEventListener('input', () => {
+        applyView();
+        // Re-init search after reload
+        Search.init(load(), [
+          { name: 'decision',  weight: 4 },
+          { name: 'rationale', weight: 2 },
+          { name: 'project',   weight: 1 }
+        ]);
+        applyView();
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>

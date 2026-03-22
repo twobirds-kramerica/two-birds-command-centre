@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Inbox — Two Birds</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"     class="nav-link">Dashboard</a>
+      <a href="vault.html"     class="nav-link">Vault</a>
+      <a href="inbox.html"     class="nav-link active">Inbox</a>
+      <a href="decisions.html" class="nav-link">Decisions</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <div class="page-title">
+      <h1>Inbox</h1>
+      <p>Raw dumps from Gemini, Grok, ChatGPT, and other sources — waiting to be processed into the vault.</p>
+    </div>
+
+    <!-- How to add files -->
+    <div style="background:var(--bg-1);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:0.875rem;color:var(--text-1);">
+      <strong style="color:var(--text-0)">How to add a file to the inbox:</strong>
+      <ol style="margin:0.5rem 0 0 1.2rem;line-height:1.8">
+        <li>Drop any <code>.md</code>, <code>.txt</code>, or <code>.json</code> file into the <code>/inbox/</code> folder</li>
+        <li>Add an entry to <code>data/inbox-index.json</code> (see template below)</li>
+        <li>Commit — it will appear here</li>
+        <li>When processed: move the file to <code>/vault/[category]/</code> and add it to <code>vault-index.json</code></li>
+      </ol>
+      <details style="margin-top:0.75rem">
+        <summary style="cursor:pointer;color:var(--accent);font-size:0.82rem">inbox-index.json entry template</summary>
+        <pre style="margin-top:0.5rem;background:var(--bg-2);padding:0.75rem;border-radius:var(--radius);font-size:0.78rem;overflow-x:auto"><code>{
+  "id": "inbox-001",
+  "filename": "my-gemini-export.md",
+  "path": "inbox/my-gemini-export.md",
+  "source": "Gemini",
+  "dateAdded": "2026-03-22",
+  "status": "unprocessed",
+  "notes": "Optional context about this file"
+}</code></pre>
+      </details>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap" role="search">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="inbox-search"
+        placeholder="Search inbox by filename, source, notes…"
+        aria-label="Search inbox"
+        autocomplete="off">
+    </div>
+
+    <!-- File list -->
+    <div id="inbox-list" class="file-list" aria-live="polite">
+      <div class="empty-state"><div class="empty-icon">⏳</div>Loading inbox…</div>
+    </div>
+
+    <!-- Markdown viewer pane -->
+    <div id="md-viewer" class="md-viewer" aria-label="File viewer">
+      <button class="md-viewer-close" id="md-close">✕ Close</button>
+      <div id="md-content" class="md-content"></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+  <script src="js/search.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    const SOURCE_ICONS = {
+      'Gemini':  '♊',
+      'ChatGPT': '🤖',
+      'Grok':    '𝕏',
+      'Claude':  '◆',
+      'Manual':  '✍️'
+    };
+
+    function renderList(files) {
+      const list = document.getElementById('inbox-list');
+      if (!files || !files.length) {
+        list.innerHTML = `<div class="empty-state">
+          <div class="empty-icon">📭</div>
+          Inbox is empty. Drop <code>.md</code> files in <code>/inbox/</code> and add entries to <code>data/inbox-index.json</code>.
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = files.map(f => {
+        const icon = SOURCE_ICONS[f.source] || '📄';
+        const statusBadge = f.status === 'processed'
+          ? '<span class="badge badge-complete">Processed</span>'
+          : '<span class="badge badge-pending">Unprocessed</span>';
+
+        return `
+<div class="file-card" data-path="${esc(f.path)}" tabindex="0" role="button"
+     aria-label="Open ${esc(f.filename)}">
+  <div class="file-card-header">
+    <span class="file-title">${icon} ${esc(f.filename)}</span>
+    ${statusBadge}
+  </div>
+  <div class="file-meta">
+    <span>Added ${esc(f.dateAdded || '')}</span>
+    <span>Source: <strong style="color:var(--text-0)">${esc(f.source || 'Unknown')}</strong></span>
+    ${f.notes ? `<span>${esc(f.notes)}</span>` : ''}
+  </div>
+</div>`;
+      }).join('');
+
+      list.querySelectorAll('.file-card').forEach(card => {
+        const open = () => openFile(card.dataset.path);
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(); });
+      });
+    }
+
+    async function openFile(path) {
+      if (!path) return;
+      const viewer  = document.getElementById('md-viewer');
+      const content = document.getElementById('md-content');
+      content.innerHTML = '<p style="color:var(--text-2)">Loading…</p>';
+      viewer.classList.add('open');
+      viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      try {
+        const res = await fetch(path);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
+        // Detect plain text vs markdown
+        content.innerHTML = typeof marked !== 'undefined'
+          ? marked.parse(text)
+          : `<pre style="white-space:pre-wrap;font-size:0.85rem">${esc(text)}</pre>`;
+      } catch (e) {
+        content.innerHTML = `<p style="color:var(--s-blocked)">Could not load: ${esc(path)}<br><small>${esc(e.message)}</small></p>`;
+      }
+    }
+
+    async function init() {
+      let data = { files: [] };
+      try {
+        const res = await fetch('data/inbox-index.json');
+        if (res.ok) data = await res.json();
+      } catch (e) {
+        // No inbox-index.json yet — show empty state
+      }
+
+      const files = data.files || [];
+
+      Search.init(files, [
+        { name: 'filename', weight: 4 },
+        { name: 'source',   weight: 2 },
+        { name: 'notes',    weight: 1 }
+      ]);
+
+      renderList(files);
+
+      const searchEl = document.getElementById('inbox-search');
+      if (searchEl) {
+        searchEl.addEventListener('input', () => {
+          renderList(Search.query(searchEl.value));
+        });
+      }
+
+      document.getElementById('md-close').addEventListener('click', () => {
+        document.getElementById('md-viewer').classList.remove('open');
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>
