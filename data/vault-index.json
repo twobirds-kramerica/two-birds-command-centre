@@ -1,0 +1,49 @@
+{
+  "lastUpdated": "2026-03-22",
+  "files": [
+    {
+      "id": "strat-dcc-001",
+      "path": "vault/strategy/DCC-Strategic-Analysis-March-2026.md",
+      "title": "Digital Confidence Centre — Full Strategic Analysis",
+      "category": "strategy",
+      "project": "dcc",
+      "date": "2026-03-22",
+      "trust": "green",
+      "reviewBy": "2026-06-22",
+      "tags": ["dcc", "strategy", "market", "revenue", "positioning"]
+    },
+    {
+      "id": "strat-dcc-002",
+      "path": "vault/strategy/DCC-SEO-AEO-Strategy-March-2026.md",
+      "title": "SEO & AEO Strategy — Tool Evaluation + Implementation Plan",
+      "category": "strategy",
+      "project": "dcc",
+      "date": "2026-03-22",
+      "trust": "green",
+      "reviewBy": "2026-06-22",
+      "tags": ["dcc", "seo", "aeo", "schema", "search"]
+    },
+    {
+      "id": "session-art-001",
+      "path": "vault/sessions/Artifact-Builder-Concept-March-2026.md",
+      "title": "Signal-Driven Automatic Artifact Builder",
+      "category": "session",
+      "project": "artifacts",
+      "date": "2026-03-22",
+      "trust": "permanent",
+      "reviewBy": "never",
+      "tags": ["artifacts", "automation", "product-idea", "vault"]
+    },
+    {
+      "id": "decision-log-001",
+      "path": "vault/decisions/2026-03-decision-log.md",
+      "title": "Key Decisions — March 2026",
+      "category": "decision",
+      "project": "global",
+      "date": "2026-03-22",
+      "trust": "permanent",
+      "reviewBy": "never",
+      "tags": ["decisions", "architecture", "strategy", "revenue"]
+    }
+  ]
+}

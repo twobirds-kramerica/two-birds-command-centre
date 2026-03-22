@@ -1,0 +1,41 @@
+{
+  "lastUpdated": "2026-03-22",
+  "sprints": [
+    {
+      "id": "dcc-sprint-aeo",
+      "project": "dcc",
+      "name": "AEO Foundation",
+      "date": "2026-03-22",
+      "status": "complete",
+      "commits": [
+        "feat: add JSON-LD structured data for AEO foundation",
+        "feat: update robots.txt and sitemap.xml for AI crawler access",
+        "feat: rewrite meta descriptions for AEO optimisation",
+        "fix: semantic HTML heading hierarchy audit"
+      ],
+      "summary": "Added Organisation, FAQPage, Article, and LocalBusiness JSON-LD schemas to all pages. Explicit AI crawler rules in robots.txt. 16-page meta description rewrite. Fixed 81 heading hierarchy violations across all modules."
+    },
+    {
+      "id": "dcc-sprint-glossary",
+      "project": "dcc",
+      "name": "Glossary Deep Expansion + Search Intelligence",
+      "date": "2026-03-22",
+      "status": "complete",
+      "commits": [
+        "feat: 200+ glossary entries in EN and FR — master term list",
+        "feat: fuzzy search, bilingual toggle, category browse, and analytics",
+        "feat: glossary SEO/AEO optimisation with FAQPage schema"
+      ],
+      "summary": "120+ bilingual terms (EN/FR) across 12 categories. Fuse.js fuzzy search with did-you-mean. Category filter. Search analytics to localStorage + GA. Admin dashboard at ?admin=true. FAQPage JSON-LD with 15 Q&As."
+    },
+    {
+      "id": "cmd-sprint-1",
+      "project": "command",
+      "name": "Command Centre v1.0",
+      "date": "2026-03-22",
+      "status": "in-progress",
+      "commits": [],
+      "summary": "Initial build of Superman Table command centre dashboard."
+    }
+  ]
+}

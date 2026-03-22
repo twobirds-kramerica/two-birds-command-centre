@@ -1,0 +1,110 @@
+{
+  "lastUpdated": "2026-03-22",
+  "projects": [
+    {
+      "id": "dcc",
+      "name": "Digital Confidence Centre",
+      "repo": "https://github.com/twobirds-kramerica/digital-confidence",
+      "live": "https://twobirds-kramerica.github.io/digital-confidence/",
+      "status": "active",
+      "description": "Free digital literacy platform for Ontario seniors 70+",
+      "epics": [
+        {"id": "dcc-mvp",     "name": "MVP Site Sprints + UI/UX Polish",                    "status": "active"},
+        {"id": "dcc-glossary","name": "Glossary Deep Expansion + Fuzzy Search",              "status": "in-progress"},
+        {"id": "dcc-aeo",    "name": "AEO Foundation (Schema, Sitemap, Robots)",             "status": "complete"},
+        {"id": "dcc-beta",   "name": "Beta Recruitment + Launch",                            "status": "queued"},
+        {"id": "dcc-parent", "name": "Set Up for Your Parent Onboarding Flow",               "status": "queued"},
+        {"id": "dcc-privacy","name": "Privacy Promise Page",                                 "status": "queued"},
+        {"id": "dcc-showme", "name": "Visual AI Show Me Module",                             "status": "queued"},
+        {"id": "dcc-domain", "name": ".ca Domain Registration",                              "status": "queued"},
+        {"id": "dcc-family", "name": "Family Dashboard (Premium Feature)",                   "status": "deferred"},
+        {"id": "dcc-french", "name": "French Translation",                                   "status": "deferred"},
+        {"id": "dcc-saas",   "name": "SaaS Licensing Architecture (B2B White-Label)",        "status": "deferred"},
+        {"id": "dcc-images", "name": "Image Strategy (AI Generation via ImageFX)",           "status": "deferred"},
+        {"id": "dcc-seo",    "name": "SEO/AEO Ongoing Content Marketing",                    "status": "deferred"}
+      ]
+    },
+    {
+      "id": "hal",
+      "name": "HAL Stack",
+      "repo": null,
+      "live": null,
+      "status": "deferred",
+      "description": "Voice-first AI development rig. Social Stack Diary Entry #1.",
+      "epics": [
+        {"id": "hal-voice",  "name": "Voice Transcription Workflow (Ito + KDE Connect)", "status": "deferred"},
+        {"id": "hal-preview","name": "UI Preview Layer (Lovable)",                        "status": "deferred"},
+        {"id": "hal-credits","name": "Credit Intelligence Dashboard",                     "status": "deferred"},
+        {"id": "hal-design", "name": "Component Library + vibe_rules.md",                "status": "deferred"}
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "P3 — Personal Priority Partner",
+      "repo": null,
+      "live": null,
+      "status": "deferred",
+      "description": "Accountability tool with rigidity slider, pushback personas, escalating tone ladder.",
+      "epics": [
+        {"id": "p3-prototype","name": "P3 Prototype v0.1",                                      "status": "complete"},
+        {"id": "p3-rigidity", "name": "Rigidity Slider + Persona System",                       "status": "deferred"},
+        {"id": "p3-clinical", "name": "Clinical Partnership Concept (ADHD Specialist)",         "status": "deferred"}
+      ]
+    },
+    {
+      "id": "command",
+      "name": "Superman Table — Command Centre",
+      "repo": "https://github.com/twobirds-kramerica/two-birds-command-centre",
+      "live": null,
+      "status": "active",
+      "description": "Central dashboard across all Two Birds projects.",
+      "epics": [
+        {"id": "cmd-dashboard","name": "Dashboard + Search",                                    "status": "in-progress"},
+        {"id": "cmd-vault",   "name": "Artifact Vault",                                         "status": "queued"},
+        {"id": "cmd-decay",   "name": "Trust Decay Monitoring",                                 "status": "queued"},
+        {"id": "cmd-inbox",   "name": "Inbound Dropbox for Gemini/Grok/ChatGPT Exports",        "status": "queued"}
+      ]
+    },
+    {
+      "id": "advisory",
+      "name": "Service Innovation Advisory",
+      "repo": null,
+      "live": null,
+      "status": "planned",
+      "description": "Fractional AI Leadership — 30-Day Workflow Audits and Execution Retainers for SW Ontario SMEs.",
+      "epics": [
+        {"id": "adv-audit",   "name": "30-Day AI Workflow Audit Product ($2,500)",              "status": "planned"},
+        {"id": "adv-retainer","name": "Execution Retainer Product ($4,000/mo)",                 "status": "planned"},
+        {"id": "adv-pipeline","name": "Client Pipeline + LinkedIn Outreach",                    "status": "planned"}
+      ]
+    },
+    {
+      "id": "talent",
+      "name": "Talent Link",
+      "repo": null,
+      "live": null,
+      "status": "parked",
+      "description": "AI-augmented career transition and placement. Master Idea Vault concept.",
+      "epics": []
+    },
+    {
+      "id": "artifacts",
+      "name": "Signal-Driven Artifact Builder",
+      "repo": null,
+      "live": null,
+      "status": "pending",
+      "description": "Auto-detect high-value sessions and generate timestamped artifacts with trust decay.",
+      "epics": [
+        {"id": "art-optionb","name": "Option B — Archive Trigger Phrase (Active in User Prefs)","status": "complete"},
+        {"id": "art-optionc","name": "Option C — NotebookLM Vault Layer",                       "status": "deferred"},
+        {"id": "art-optiona","name": "Option A — Zapier + Claude API Automation",               "status": "deferred"}
+      ]
+    }
+  ],
+  "infrastructure": [
+    {"name": "ShareX",             "status": "to-install",     "note": "Snagit replacement — screenshot workflow"},
+    {"name": "Machine Migration",  "status": "deferred",       "note": "Evaluate 3 laptops + desktop for optimal workstation"},
+    {"name": "Account Security",   "status": "deferred",       "note": "Three-account model + ProtonMail for vault"},
+    {"name": "Gemini Voice Workflow","status": "active-interim","note": "Current voice input. Upgrade path: Ito + KDE Connect"}
+  ]
+}
