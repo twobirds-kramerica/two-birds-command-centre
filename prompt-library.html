@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Prompt Library — Two Birds Command Centre</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .pl-hero {
+      padding: 2rem 0 1rem;
+    }
+    .pl-hero h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-0);
+    }
+    .pl-hero p {
+      color: var(--text-1);
+      font-size: 0.92rem;
+      margin-top: 0.35rem;
+    }
+
+    .pl-filters {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .pl-filter-btn {
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-1);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .pl-filter-btn:hover { border-color: var(--border-hi); color: var(--text-0); }
+    .pl-filter-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent-dim);
+      color: #fff;
+    }
+
+    .pl-grid {
+      display: grid;
+      gap: 1.25rem;
+      grid-template-columns: 1fr;
+    }
+
+    .pl-card {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem 1.5rem;
+      transition: border-color 0.15s;
+    }
+    .pl-card:hover { border-color: var(--border-hi); }
+    .pl-card[data-hidden="true"] { display: none; }
+
+    .pl-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .pl-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .pl-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #f85149;
+      flex-shrink: 0;
+    }
+    .pl-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-0);
+    }
+    .pl-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .pl-theme {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--accent);
+      background: var(--s-progress-bg);
+      border: 1px solid var(--accent-dim);
+    }
+    .pl-stars {
+      color: #d29922;
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+    }
+
+    .pl-hook {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text-0);
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+      font-style: italic;
+      border-left: 3px solid var(--accent-dim);
+      padding-left: 0.85rem;
+    }
+
+    .pl-problem {
+      font-size: 0.85rem;
+      color: var(--text-1);
+      margin-bottom: 0.75rem;
+      line-height: 1.55;
+    }
+
+    .pl-toggle-btn {
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-2);
+      color: var(--text-1);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .pl-toggle-btn:hover { border-color: var(--accent-dim); color: var(--text-0); }
+
+    .pl-detail {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .pl-detail.open { display: block; }
+    .pl-detail h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-0);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 1rem 0 0.4rem;
+    }
+    .pl-detail h3:first-child { margin-top: 0; }
+    .pl-detail p {
+      font-size: 0.88rem;
+      color: var(--text-1);
+      line-height: 1.55;
+      margin-bottom: 0.5rem;
+    }
+
+    .pl-code-wrap {
+      position: relative;
+      margin: 0.5rem 0 1rem;
+    }
+    .pl-code {
+      background: var(--bg-0);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-0);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+    }
+    .pl-copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-2);
+      color: var(--text-1);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pl-copy-btn:hover { border-color: var(--accent-dim); color: var(--text-0); }
+    .pl-copy-btn.copied { background: var(--s-active-bg); color: var(--s-active); border-color: var(--s-active); }
+
+    .pl-suggest {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .pl-suggest h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-0);
+      margin-bottom: 0.5rem;
+    }
+    .pl-suggest p {
+      font-size: 0.88rem;
+      color: var(--text-1);
+      margin-bottom: 1rem;
+    }
+    .pl-suggest a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius);
+      background: var(--accent-dim);
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .pl-suggest a:hover { opacity: 0.85; text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .pl-card { padding: 1.1rem 1rem; }
+      .pl-hook { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"          class="nav-link">Dashboard</a>
+      <a href="vault.html"          class="nav-link">Vault</a>
+      <a href="inbox.html"          class="nav-link">Inbox</a>
+      <a href="decisions.html"      class="nav-link">Decisions</a>
+      <a href="language-bank.html"  class="nav-link">Language</a>
+      <a href="prompt-library.html" class="nav-link active">Prompts</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <div class="pl-hero">
+      <h1>The Two Birds Prompt Library</h1>
+      <p>Prompts built from real work, not demos. Each one solved a real problem and produced a real result.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="pl-filters" role="group" aria-label="Filter by theme">
+      <button class="pl-filter-btn active" data-theme-filter="all">All</button>
+      <button class="pl-filter-btn" data-theme-filter="automation">Automation</button>
+      <button class="pl-filter-btn" data-theme-filter="workflow">Workflow</button>
+      <button class="pl-filter-btn" data-theme-filter="setup">Setup</button>
+      <button class="pl-filter-btn" data-theme-filter="product">Product</button>
+      <button class="pl-filter-btn" data-theme-filter="business">Business</button>
+    </div>
+
+    <!-- Prompt Cards -->
+    <div class="pl-grid" id="promptGrid">
+
+      <!-- EUREKA-001 -->
+      <div class="pl-card" data-theme-tag="automation">
+        <div class="pl-card-header">
+          <div class="pl-card-title">
+            <span class="pl-dot" aria-label="Eureka prompt"></span>
+            <span class="pl-name">EUREKA-001 — The Overnight Build Agent</span>
+          </div>
+          <div class="pl-meta">
+            <span class="pl-theme">Automation</span>
+            <span class="pl-stars" aria-label="Shareability: 5 of 5">★★★★★</span>
+          </div>
+        </div>
+        <div class="pl-hook">"I built an overnight build agent that reads my backlog, executes the top 3 items, commits and pushes each one, then writes a log of what it did — all while I sleep."</div>
+        <div class="pl-problem">You have a backlog of build tasks but only so many waking hours. This prompt turns Claude Code into an autonomous agent that reads your planning documents as instructions, executes work, and writes accountability logs.</div>
+        <button class="pl-toggle-btn" onclick="toggleDetail(this)"><span class="chevron">▸</span> View prompt</button>
+        <div class="pl-detail">
+          <h3>Why It's A Eureka Moment</h3>
+          <p>Most people think of AI assistants as interactive. This prompt turns Claude Code into an autonomous build agent that reads your own planning documents as its instructions. Your backlog file becomes the control plane. The log file becomes the accountability layer.</p>
+          <h3>The Verbatim Prompt</h3>
+          <div class="pl-code-wrap">
+            <pre class="pl-code">You are an autonomous build agent for Two Birds Innovation.
+Read C:\twobirds\two-birds-portfolio\NEXT-SPRINT-QUEUE.md and
+C:\twobirds\two-birds-portfolio\SESSION-STATE.md.
+Execute the top 3 items that are fully Claude Code executable —
+skip anything marked as Aaron manual, pending approval, or
+requiring human input. Commit and push after each completed item.
+After completing all tasks, append a run entry to
+C:\twobirds\two-birds-portfolio\logs\automated-run-log.md with:
+date/time, tasks completed, commits made, anything skipped and why,
+next recommended action. Then commit and push the log file.
+Finally, overwrite C:\twobirds\two-birds-portfolio\logs\LAST-RUN-SUMMARY.md
+with a plain-text summary of what ran, then commit and push it.
+Canadian English. Static HTML/CSS/JS only. No npm. No Node frameworks.</pre>
+            <button class="pl-copy-btn" onclick="copyPrompt(this)">Copy</button>
+          </div>
+          <h3>How To Adapt It</h3>
+          <p>Replace file paths with your own backlog and state files. Change "top 3 items" to however many you want per run. The key insight: your planning document IS the prompt input — keep it machine-readable.</p>
+        </div>
+      </div>
+
+      <!-- EUREKA-002 -->
+      <div class="pl-card" data-theme-tag="workflow">
+        <div class="pl-card-header">
+          <div class="pl-card-title">
+            <span class="pl-dot" aria-label="Eureka prompt"></span>
+            <span class="pl-name">EUREKA-002 — The Trigger Word System</span>
+          </div>
+          <div class="pl-meta">
+            <span class="pl-theme">Workflow</span>
+            <span class="pl-stars" aria-label="Shareability: 4 of 5">★★★★☆</span>
+          </div>
+        </div>
+        <div class="pl-hook">"I replaced screenshots with a single URL. After every Claude Code session, it writes a summary to GitHub. I paste the URL anywhere to see what happened."</div>
+        <div class="pl-problem">When you finish a session, you have no easy way to check what happened from another device. This creates a persistent, always-current URL that serves as your session history API.</div>
+        <button class="pl-toggle-btn" onclick="toggleDetail(this)"><span class="chevron">▸</span> View prompt</button>
+        <div class="pl-detail">
+          <h3>Why It's A Eureka Moment</h3>
+          <p>A raw GitHub URL is a universal, persistent, always-current API endpoint for your own work. You don't need a dashboard, a Slack bot, or a notification system. You just need a file that gets overwritten after every session.</p>
+          <h3>The Verbatim Prompt</h3>
+          <div class="pl-code-wrap">
+            <pre class="pl-code">Finally, overwrite C:\twobirds\two-birds-portfolio\logs\LAST-RUN-SUMMARY.md
+with a plain-text summary of what ran, then commit and push it.</pre>
+            <button class="pl-copy-btn" onclick="copyPrompt(this)">Copy</button>
+          </div>
+          <h3>How To Adapt It</h3>
+          <p>Create your own LAST-RUN-SUMMARY.md in any GitHub repo. Add the overwrite instruction to the end of every autonomous prompt. Bookmark the raw GitHub URL for quick access from any device.</p>
+        </div>
+      </div>
+
+      <!-- EUREKA-003 -->
+      <div class="pl-card" data-theme-tag="product">
+        <div class="pl-card-header">
+          <div class="pl-card-title">
+            <span class="pl-dot" aria-label="Eureka prompt"></span>
+            <span class="pl-name">EUREKA-003 — Trust-First Onboarding</span>
+          </div>
+          <div class="pl-meta">
+            <span class="pl-theme">Product</span>
+            <span class="pl-stars" aria-label="Shareability: 5 of 5">★★★★★</span>
+          </div>
+        </div>
+        <div class="pl-hook">"For anxious users, onboarding isn't a funnel — it's a safety blanket. Here's the 4-step overlay that changed how seniors interact with our platform."</div>
+        <div class="pl-problem">Standard "Sign up and get started" flows create immediate friction for anxious users. Trust-first onboarding answers three questions before showing any complexity: What is this? Is it safe? What do I do first?</div>
+        <button class="pl-toggle-btn" onclick="toggleDetail(this)"><span class="chevron">▸</span> View prompt</button>
+        <div class="pl-detail">
+          <h3>Why It's A Eureka Moment</h3>
+          <p>Most onboarding optimises for speed. For anxious users, speed is the enemy. They need reassurance before action. The insight: for trust-sensitive audiences, the onboarding IS the product experience.</p>
+          <h3>The Verbatim Prompt</h3>
+          <div class="pl-code-wrap">
+            <pre class="pl-code">Build a first-visit onboarding overlay for the Digital Confidence Centre.
+Target audience: seniors 70+ who are afraid of technology.
+4 steps, each one screen:
+Step 1: "Welcome to the Digital Confidence Centre" — what this is in one sentence
+Step 2: "This is completely free and safe" — safety reassurance, nothing downloads,
+        you cannot break anything, your information stays private
+Step 3: "Start with what matters to you" — show 3 module categories
+        (Staying Safe, Staying Connected, Getting Things Done)
+Step 4: "You're ready" — single green button: "I'm ready to start"
+Large text. High contrast. One action per screen. No jargon.
+Remember on return visits (localStorage flag). Dismissible but not aggressive.</pre>
+            <button class="pl-copy-btn" onclick="copyPrompt(this)">Copy</button>
+          </div>
+          <h3>How To Adapt It</h3>
+          <p>Change the audience profile — anxious users exist in healthcare, finance, and government. Replace the safety messages with whatever your users fear most. Keep the one-action-per-screen principle. Name the fears out loud.</p>
+        </div>
+      </div>
+
+      <!-- EUREKA-004 -->
+      <div class="pl-card" data-theme-tag="workflow">
+        <div class="pl-card-header">
+          <div class="pl-card-title">
+            <span class="pl-dot" aria-label="Eureka prompt"></span>
+            <span class="pl-name">EUREKA-004 — Session State as Memory</span>
+          </div>
+          <div class="pl-meta">
+            <span class="pl-theme">Workflow</span>
+            <span class="pl-stars" aria-label="Shareability: 5 of 5">★★★★★</span>
+          </div>
+        </div>
+        <div class="pl-hook">"Claude Code has no memory between sessions. So I gave it one — a markdown file it reads at the start and writes at the end. Git history gives it time travel for free."</div>
+        <div class="pl-problem">Every new conversation starts from zero. You lose context, repeat work, and make contradictory decisions. A structured markdown file committed to git becomes Claude's long-term memory.</div>
+        <button class="pl-toggle-btn" onclick="toggleDetail(this)"><span class="chevron">▸</span> View prompt</button>
+        <div class="pl-detail">
+          <h3>Why It's A Eureka Moment</h3>
+          <p>A markdown file committed to git IS a memory system. It's version-controlled, portable, human-readable, and machine-readable. The git history gives you time travel for free — you can see what Claude knew at any point in the past.</p>
+          <h3>The Verbatim Prompt</h3>
+          <div class="pl-code-wrap">
+            <pre class="pl-code">Read C:\twobirds\two-birds-portfolio\SESSION-STATE.md before starting.
+
+[... do work ...]
+
+FINAL STEP — Create or update SESSION-STATE.md with:
+- Date and time of this session
+- Phases that ran and their completion status
+- Commits made (repo, commit message, push status)
+- Anything skipped and why
+- Next recommended action</pre>
+            <button class="pl-copy-btn" onclick="copyPrompt(this)">Copy</button>
+          </div>
+          <h3>How To Adapt It</h3>
+          <p>Create a SESSION-STATE.md in your project root. Add "Read SESSION-STATE.md before starting" to the top of every prompt. Add the "FINAL STEP" template to the bottom. Keep the structure consistent. For multi-repo projects, keep state in one central repo.</p>
+        </div>
+      </div>
+
+      <!-- EUREKA-005 -->
+      <div class="pl-card" data-theme-tag="business">
+        <div class="pl-card-header">
+          <div class="pl-card-title">
+            <span class="pl-dot" aria-label="Eureka prompt"></span>
+            <span class="pl-name">EUREKA-005 — The MBA Intern Friction Observer</span>
+          </div>
+          <div class="pl-meta">
+            <span class="pl-theme">Business</span>
+            <span class="pl-stars" aria-label="Shareability: 4 of 5">★★★★☆</span>
+          </div>
+        </div>
+        <div class="pl-hook">"I told Claude to watch me work like an MBA intern — note every friction point, score it 1-10, and log it. The list it produced was more valuable than the code."</div>
+        <div class="pl-problem">When you're building fast, you don't notice your own inefficiencies. This prompt uses AI to watch you work — the output isn't code, it's a prioritised list of your own friction points.</div>
+        <button class="pl-toggle-btn" onclick="toggleDetail(this)"><span class="chevron">▸</span> View prompt</button>
+        <div class="pl-detail">
+          <h3>Why It's A Eureka Moment</h3>
+          <p>Most people use AI to do work. This prompt uses AI to watch you work. Every friction point is a potential product improvement, process fix, or automation opportunity. Your daily frustrations are data, and the pattern in that data is where the leverage lives.</p>
+          <h3>The Verbatim Prompt</h3>
+          <div class="pl-code-wrap">
+            <pre class="pl-code">While working on this session, observe my workflow for friction points.
+A friction point is any moment where:
+- I repeat a manual step that could be automated
+- I hit an error that wastes time
+- I work around something broken instead of fixing it
+- I context-switch unnecessarily
+- A tool fails and I have to retry
+
+Log each friction point as:
+FP-[number]: [description] | Score: [1-10] | Status: LOGGED
+
+At the end of the session, write all friction points to a
+FRICTION-LOG.md file. Sort by score descending.
+For anything scored 7+, add a "Suggested fix" line.</pre>
+            <button class="pl-copy-btn" onclick="copyPrompt(this)">Copy</button>
+          </div>
+          <h3>How To Adapt It</h3>
+          <p>Add this instruction to the top of any extended work session. Adjust the friction criteria. Review the log weekly — patterns across sessions reveal systemic issues. Share friction logs with your team to normalise talking about inefficiency.</p>
+        </div>
+      </div>
+
+      <!-- EUREKA-006 -->
+      <div class="pl-card" data-theme-tag="setup">
+        <div class="pl-card-header">
+          <div class="pl-card-title">
+            <span class="pl-dot" aria-label="Eureka prompt"></span>
+            <span class="pl-name">EUREKA-006 — One-Prompt Machine Setup</span>
+          </div>
+          <div class="pl-meta">
+            <span class="pl-theme">Setup</span>
+            <span class="pl-stars" aria-label="Shareability: 5 of 5">★★★★★</span>
+          </div>
+        </div>
+        <div class="pl-hook">"I set up Claude Code on a brand new Windows laptop in 15 minutes using one prompt. Every step includes the workaround for the thing that actually breaks."</div>
+        <div class="pl-problem">Setting up a new development machine takes hours. This prompt generates a complete setup guide from real experience — including every gotcha discovered through multi-machine pain.</div>
+        <button class="pl-toggle-btn" onclick="toggleDetail(this)"><span class="chevron">▸</span> View prompt</button>
+        <div class="pl-detail">
+          <h3>Why It's A Eureka Moment</h3>
+          <p>The guide isn't generated from documentation — it's generated from pain. Every step includes the workaround for the thing that actually breaks. These gotchas aren't in any official docs. They come from setting up two real machines and hitting every wall.</p>
+          <h3>The Verbatim Prompt</h3>
+          <div class="pl-code-wrap">
+            <pre class="pl-code">Create a complete step-by-step guide for setting up Claude Code on a new
+Windows machine. Based on hard-won learnings from i5 Lenovo and silver
+Pentium setups. Include every section below exactly:
+
+- BEFORE YOU START: right-click paste, admin PowerShell, credentials needed
+- STEP 1: Install prerequisites (Git, GitHub CLI, Node.js via winget)
+- STEP 2: Install Claude Code (npm install -g @anthropic-ai/claude-code)
+- STEP 3: Authenticate GitHub and Claude
+- STEP 4: Create workspace and set permissions (icacls)
+- STEP 5: Clone all repos
+- STEP 6: Set git identity
+- STEP 7: Create desktop launcher
+- STEP 8: Disable sleep on AC power
+- STEP 9: Register overnight scheduler
+- STEP 10: Verify everything works
+- KNOWN GOTCHAS: every real error encountered and its fix</pre>
+            <button class="pl-copy-btn" onclick="copyPrompt(this)">Copy</button>
+          </div>
+          <h3>How To Adapt It</h3>
+          <p>Replace the repo list with your own. Adjust the workspace path. Add or remove steps based on your stack. The gotchas section is the most valuable part — add your own as you discover them. A setup guide written from memory of what broke is worth ten times one written from docs.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Suggest a prompt -->
+    <div class="pl-suggest">
+      <h2>Have a prompt worth sharing?</h2>
+      <p>If you've built something with Claude Code that solved a real problem, we'd love to hear about it.</p>
+      <a href="mailto:aaron.patzalek@gmail.com?subject=Prompt%20Library%20Suggestion">Suggest a prompt</a>
+    </div>
+
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // Filter buttons
+    var filterBtns = document.querySelectorAll('.pl-filter-btn');
+    var cards = document.querySelectorAll('.pl-card');
+
+    filterBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        filterBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var filter = btn.getAttribute('data-theme-filter');
+        cards.forEach(function(card) {
+          if (filter === 'all' || card.getAttribute('data-theme-tag') === filter) {
+            card.setAttribute('data-hidden', 'false');
+            card.style.display = '';
+          } else {
+            card.setAttribute('data-hidden', 'true');
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Toggle detail
+    window.toggleDetail = function(btn) {
+      var detail = btn.nextElementSibling;
+      var chevron = btn.querySelector('.chevron');
+      if (detail.classList.contains('open')) {
+        detail.classList.remove('open');
+        chevron.textContent = '▸';
+        btn.innerHTML = '<span class="chevron">▸</span> View prompt';
+      } else {
+        detail.classList.add('open');
+        chevron.textContent = '▾';
+        btn.innerHTML = '<span class="chevron">▾</span> Hide prompt';
+      }
+    };
+
+    // Copy prompt
+    window.copyPrompt = function(btn) {
+      var pre = btn.parentElement.querySelector('.pl-code');
+      var text = pre.textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(function() {
+        // Fallback
+        var range = document.createRange();
+        range.selectNodeContents(pre);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    };
+  })();
+  </script>
+</body>
+</html>
