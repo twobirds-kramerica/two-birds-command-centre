@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Language Bank — Two Birds Command Centre</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* ── Language Bank Styles ── */
+    .lb-updated {
+      font-size: 0.82rem;
+      color: var(--text-2);
+      margin-bottom: 2rem;
+    }
+
+    .lb-section {
+      margin-bottom: 2.5rem;
+    }
+    .lb-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-0);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--accent-dim);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Trigger Word Cards ── */
+    .trigger-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+    .trigger-card {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.2rem 1.3rem;
+      transition: border-color 0.15s;
+    }
+    .trigger-card:hover { border-color: var(--accent-dim); }
+    .trigger-word {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .trigger-desc {
+      font-size: 0.88rem;
+      color: var(--text-0);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .trigger-when {
+      font-size: 0.82rem;
+      color: var(--text-1);
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+    .trigger-when strong {
+      color: var(--text-0);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .trigger-example {
+      font-size: 0.82rem;
+      color: var(--text-2);
+      font-style: italic;
+      border-left: 2px solid var(--border-hi);
+      padding-left: 0.75rem;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Glossary Tables ── */
+    .lb-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      font-size: 0.88rem;
+    }
+    .lb-table th {
+      background: var(--bg-2);
+      color: var(--text-0);
+      font-weight: 700;
+      text-align: left;
+      padding: 0.65rem 1rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+    .lb-table td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-1);
+      vertical-align: top;
+    }
+    .lb-table tr:last-child td { border-bottom: none; }
+    .lb-table tr:hover td { background: var(--bg-2); }
+    .lb-table td:first-child {
+      font-weight: 700;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      font-size: 0.85rem;
+    }
+
+    /* ── Feedback Flags ── */
+    .flag-grid {
+      display: grid;
+      gap: 0.6rem;
+    }
+    .flag-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.65rem 1rem;
+    }
+    .flag-row:hover { border-color: var(--border-hi); }
+    .flag-emoji {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      width: 2rem;
+      text-align: center;
+    }
+    .flag-name {
+      font-weight: 700;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text-0);
+      min-width: 80px;
+    }
+    .flag-when {
+      font-size: 0.82rem;
+      color: var(--text-1);
+      flex: 1;
+    }
+
+    /* ── Friction Point Table ── */
+    .fp-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      font-size: 0.85rem;
+    }
+    .fp-table th {
+      background: var(--bg-2);
+      color: var(--text-0);
+      font-weight: 700;
+      text-align: left;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+    .fp-table td {
+      padding: 0.55rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-1);
+      vertical-align: middle;
+    }
+    .fp-table tr:last-child td { border-bottom: none; }
+    .fp-table tr:hover td { background: var(--bg-2); }
+    .fp-id {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-0);
+      font-size: 0.82rem;
+    }
+    .fp-score {
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .fp-badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .fp-fixed   { color: var(--s-active);  background: var(--s-active-bg); }
+    .fp-logged  { color: var(--s-queued);  background: var(--s-queued-bg); }
+    .fp-ongoing { color: var(--s-blocked); background: var(--s-blocked-bg); }
+
+    @media (max-width: 640px) {
+      .trigger-grid { grid-template-columns: 1fr; }
+      .lb-table, .fp-table { font-size: 0.82rem; }
+      .lb-table td, .lb-table th,
+      .fp-table td, .fp-table th { padding: 0.5rem 0.65rem; }
+      .flag-row { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"         class="nav-link">Dashboard</a>
+      <a href="vault.html"         class="nav-link">Vault</a>
+      <a href="inbox.html"         class="nav-link">Inbox</a>
+      <a href="decisions.html"     class="nav-link">Decisions</a>
+      <a href="language-bank.html" class="nav-link active">Language</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <div class="page-title">
+      <h1>Language Bank</h1>
+      <p>Operating vocabulary for Two Birds Innovation — trigger words, code words, industry terms, and friction tracking.</p>
+    </div>
+    <p class="lb-updated">Last updated: <time data-auto-date>April 1, 2026</time></p>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECTION 1 — TRIGGER WORDS                 -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="lb-section" aria-label="Trigger Words">
+      <h2 class="lb-section-title">Trigger Words</h2>
+      <div class="trigger-grid">
+
+        <div class="trigger-card">
+          <div class="trigger-word">RETRO</div>
+          <div class="trigger-desc">Run a sprint retrospective on recent sessions.</div>
+          <div class="trigger-when"><strong>When to use:</strong> After completing a major sprint or build session. Generates a structured What Went Well / What Didn't / What to Change analysis.</div>
+          <div class="trigger-example">"RETRO on the March 31 build sprint — what should we do differently next time?"</div>
+        </div>
+
+        <div class="trigger-card">
+          <div class="trigger-word">SPRINT</div>
+          <div class="trigger-desc">Execute a focused build session from the sprint queue.</div>
+          <div class="trigger-when"><strong>When to use:</strong> When you want Claude to pick up and execute items from NEXT-SPRINT-QUEUE.md autonomously. Commits after each completed item.</div>
+          <div class="trigger-example">"SPRINT — run the top 3 items from the queue. Skip Aaron manual tasks."</div>
+        </div>
+
+        <div class="trigger-card">
+          <div class="trigger-word">STATE</div>
+          <div class="trigger-desc">Read and summarise current SESSION-STATE.md.</div>
+          <div class="trigger-when"><strong>When to use:</strong> At the start of a new session to understand what happened last. Gives Claude full context of recent work without re-reading everything.</div>
+          <div class="trigger-example">"STATE — what did we do last session and what's next?"</div>
+        </div>
+
+        <div class="trigger-card">
+          <div class="trigger-word">DASHBOARD</div>
+          <div class="trigger-desc">Open or update the Command Centre project dashboard.</div>
+          <div class="trigger-when"><strong>When to use:</strong> When you want a visual status check across all Two Birds projects. Also used to update project statuses after completing work.</div>
+          <div class="trigger-example">"DASHBOARD — update Clarity status to Active, mark DCC Sprint 2 complete."</div>
+        </div>
+
+        <div class="trigger-card">
+          <div class="trigger-word">HAL</div>
+          <div class="trigger-desc">Reference the HAL Stack infrastructure and automation layer.</div>
+          <div class="trigger-when"><strong>When to use:</strong> When discussing automation infrastructure — n8n workflows, overnight builds, prompt queues, LightRAG. HAL is the operational backbone.</div>
+          <div class="trigger-example">"HAL — what's the status of the overnight scheduler and prompt queue?"</div>
+        </div>
+
+        <div class="trigger-card">
+          <div class="trigger-word">JOURNEY</div>
+          <div class="trigger-desc">Access or update the narrative journey archive.</div>
+          <div class="trigger-when"><strong>When to use:</strong> When you want to write, read, or extend the raw session logs or narrative chapters. The living record of Aaron's transition from corporate PM to founder.</div>
+          <div class="trigger-example">"JOURNEY — write chapter 3 covering the first client conversation."</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECTION 2 — TWO BIRDS CODE WORDS          -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="lb-section" aria-label="Code Words">
+      <h2 class="lb-section-title">Two Birds Code Words</h2>
+      <table class="lb-table" role="table">
+        <thead>
+          <tr><th>Word</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KUNO</td><td>Aaron's father. The original inspiration for the Digital Confidence Centre — a senior who needed help navigating technology safely.</td></tr>
+          <tr><td>PAISLEY</td><td>Aaron's twin daughters. The reason behind the name Two Birds — two things from the same origin, travelling in divergent directions.</td></tr>
+          <tr><td>HAL</td><td>The automation and infrastructure layer. Named after HAL 9000 — but friendlier. Covers n8n, overnight builds, prompt queues, and observability.</td></tr>
+          <tr><td>SOVEREIGNTY</td><td>The Sovereignty Doctrine — build tools that empower humans, never replace them. Core design philosophy for all Two Birds products.</td></tr>
+          <tr><td>BRENDA</td><td>Composite persona of a 74-year-old senior afraid of her iPad. The design test: "Would Brenda understand this?" Used to validate every DCC decision.</td></tr>
+          <tr><td>CONTEXT ROT</td><td>The fear and reality of losing session context between Claude Code conversations. Led to SESSION-STATE.md, LAST-RUN-SUMMARY.md, and portable briefing documents.</td></tr>
+          <tr><td>CAPACITY WINDOW</td><td>The limited context window available in each Claude Code session. Drives the discipline of concise prompts, phased execution, and state persistence.</td></tr>
+          <tr><td>HAND-OFF</td><td>The process of transferring context between sessions — via SESSION-STATE.md, voice notes, or Gmail drafts. A hand-off document is the bridge between today's session and tomorrow's.</td></tr>
+          <tr><td>FRICTION POINT</td><td>Any moment where the workflow breaks, slows down, or causes frustration. Logged with an FP number, scored 1-10, and tracked for potential product or process improvement.</td></tr>
+          <tr><td>OVERNIGHT</td><td>The automated overnight build system — Windows Task Scheduler runs Claude Code at 2:00 AM to execute sprint queue items while Aaron sleeps.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECTION 3 — INDUSTRY LANGUAGE              -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="lb-section" aria-label="Industry Language">
+      <h2 class="lb-section-title">Industry Language</h2>
+      <table class="lb-table" role="table">
+        <thead>
+          <tr><th>Term</th><th>Two Birds Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>RETRO</td><td>Retrospective — a structured review of what went well, what didn't, and what to change. Run after every major sprint.</td></tr>
+          <tr><td>SPRINT</td><td>A focused build session with a defined scope. Typically 2-4 hours. One Claude Code session = one sprint.</td></tr>
+          <tr><td>SPRINT REVIEW</td><td>End-of-sprint summary showing what was built, what was committed, and what's next. Written to SESSION-STATE.md.</td></tr>
+          <tr><td>BACKLOG</td><td>The prioritised list of work waiting to be done. Lives in NEXT-SPRINT-QUEUE.md. Ordered by strategic value.</td></tr>
+          <tr><td>HITL</td><td>Human-in-the-Loop — tasks that require Aaron's manual action, approval, or judgement. Marked in the queue and skipped by automation.</td></tr>
+          <tr><td>MRR</td><td>Monthly Recurring Revenue — the target metric. Goal: $10,000/month by August 2026. Current: $0.</td></tr>
+          <tr><td>FRACTIONAL</td><td>One dedicated day per week of senior leadership. Two Birds offers fractional AI leadership at $4,000/month.</td></tr>
+          <tr><td>AEO</td><td>Answer Engine Optimisation — structuring content so AI search tools (Perplexity, ChatGPT, Gemini) can surface it in answers.</td></tr>
+          <tr><td>GEO</td><td>Generative Engine Optimisation — broader than AEO. Optimising for how generative AI models interpret and recommend content.</td></tr>
+          <tr><td>WCAG AA</td><td>Web Content Accessibility Guidelines Level AA — the accessibility standard all Two Birds products must meet. Covers contrast, font size, keyboard navigation, screen readers.</td></tr>
+          <tr><td>STATIC</td><td>Static HTML/CSS/JS — no server, no build tools, no npm. The Two Birds stack. Deployed via GitHub Pages + Cloudflare.</td></tr>
+          <tr><td>EPHEMERAL</td><td>Information that exists only in the current session and will be lost when the context window resets. The enemy of continuity.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECTION 4 — FEEDBACK FLAGS                 -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="lb-section" aria-label="Feedback Flags">
+      <h2 class="lb-section-title">Feedback Flags</h2>
+      <div class="flag-grid">
+        <div class="flag-row">
+          <span class="flag-emoji" aria-hidden="true">🔁</span>
+          <span class="flag-name">REWORK</span>
+          <span class="flag-when">Something was built but needs to be redone. The output missed the mark or the approach was wrong. Start over with a different strategy.</span>
+        </div>
+        <div class="flag-row">
+          <span class="flag-emoji" aria-hidden="true">🔄</span>
+          <span class="flag-name">REMINDER</span>
+          <span class="flag-when">A standing instruction that Claude keeps forgetting. Add to CLAUDE.md or session briefing to prevent recurrence.</span>
+        </div>
+        <div class="flag-row">
+          <span class="flag-emoji" aria-hidden="true">➕</span>
+          <span class="flag-name">NEW</span>
+          <span class="flag-when">A new task, idea, or requirement that emerged during the session. Add to NEXT-SPRINT-QUEUE.md or the appropriate backlog.</span>
+        </div>
+        <div class="flag-row">
+          <span class="flag-emoji" aria-hidden="true">🐛</span>
+          <span class="flag-name">BUG</span>
+          <span class="flag-when">Something is broken. Fix immediately before continuing with other work. Log in session state if the fix is deferred.</span>
+        </div>
+        <div class="flag-row">
+          <span class="flag-emoji" aria-hidden="true">✨</span>
+          <span class="flag-name">POLISH</span>
+          <span class="flag-when">Functional but rough. The output works but could be cleaner, better designed, or more polished. Low priority — address when capacity allows.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECTION 5 — FRICTION POINT LOG             -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="lb-section" aria-label="Friction Point Log">
+      <h2 class="lb-section-title">Friction Point Log</h2>
+      <table class="fp-table" role="table">
+        <thead>
+          <tr>
+            <th>FP</th>
+            <th>Description</th>
+            <th>Score</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fp-id">FP-001</td>
+            <td>Context rot between sessions — losing state when context window resets</td>
+            <td class="fp-score">9</td>
+            <td><span class="fp-badge fp-fixed">Fixed</span></td>
+          </tr>
+          <tr>
+            <td class="fp-id">FP-002</td>
+            <td>Ctrl+V does not paste in Windows terminal — must right-click</td>
+            <td class="fp-score">7</td>
+            <td><span class="fp-badge fp-fixed">Fixed</span></td>
+          </tr>
+          <tr>
+            <td class="fp-id">FP-003</td>
+            <td>GitHub Actions inbox flooding — workflows firing on every push</td>
+            <td class="fp-score">8</td>
+            <td><span class="fp-badge fp-fixed">Fixed</span></td>
+          </tr>
+          <tr>
+            <td class="fp-id">FP-004</td>
+            <td>Task Scheduler registration requires admin elevation — cannot be done from Claude Code sandbox</td>
+            <td class="fp-score">6</td>
+            <td><span class="fp-badge fp-logged">Logged</span></td>
+          </tr>
+          <tr>
+            <td class="fp-id">FP-005</td>
+            <td>Git bash mangles schtasks flags — /create interpreted as file path</td>
+            <td class="fp-score">5</td>
+            <td><span class="fp-badge fp-fixed">Fixed</span></td>
+          </tr>
+          <tr>
+            <td class="fp-id">FP-006</td>
+            <td>Pentium Silver too slow for sustained Claude Code sessions — thermal throttling</td>
+            <td class="fp-score">7</td>
+            <td><span class="fp-badge fp-ongoing">Ongoing</span></td>
+          </tr>
+          <tr>
+            <td class="fp-id">FP-007</td>
+            <td>Gmail drafts as external memory is fragile — no version control, easy to lose</td>
+            <td class="fp-score">6</td>
+            <td><span class="fp-badge fp-fixed">Fixed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <script>
+    // Auto-set the last updated date
+    (function() {
+      var el = document.querySelector('[data-auto-date]');
+      if (el) el.textContent = new Date().toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' });
+    })();
+  </script>
+</body>
+</html>
