@@ -218,8 +218,9 @@
       <a href="vault.html"         class="nav-link">Vault</a>
       <a href="inbox.html"         class="nav-link">Inbox</a>
       <a href="decisions.html"     class="nav-link">Decisions</a>
-      <a href="language-bank.html"  class="nav-link active">Language</a>
-      <a href="prompt-library.html" class="nav-link">Prompts</a>
+      <a href="language-bank.html"    class="nav-link active">Language</a>
+      <a href="prompt-library.html"  class="nav-link">Prompts</a>
+      <a href="journey-timeline.html" class="nav-link">Timeline</a>
     </nav>
   </header>
 
@@ -303,6 +304,13 @@
           <tr><td>HAND-OFF</td><td>The process of transferring context between sessions — via SESSION-STATE.md, voice notes, or Gmail drafts. A hand-off document is the bridge between today's session and tomorrow's.</td></tr>
           <tr><td>FRICTION POINT</td><td>Any moment where the workflow breaks, slows down, or causes frustration. Logged with an FP number, scored 1-10, and tracked for potential product or process improvement.</td></tr>
           <tr><td>OVERNIGHT</td><td>The automated overnight build system — Windows Task Scheduler runs Claude Code at 2:00 AM to execute sprint queue items while Aaron sleeps.</td></tr>
+          <tr><td>STRAW MAN</td><td>A deliberately imperfect first draft built to provoke feedback. Build the straw man, let Aaron knock it down, rebuild from the rubble. Faster than debating in the abstract.</td></tr>
+          <tr><td>POSITIVE FRICTION</td><td>Intentional slowdowns that improve outcomes — confirmation modals, "are you sure" prompts, forced pauses before destructive actions. Not all friction is bad.</td></tr>
+          <tr><td>SCAFFOLDING FIRST</td><td>Build the structure before the content. Create the file, the nav, the empty sections — then fill them in. Prevents the blank-page paralysis and ensures architecture is sound before details land.</td></tr>
+          <tr><td>WORKFLOW AUDIT</td><td>A structured review of how Aaron actually works — what tools, what order, what friction. The input for HAL infrastructure decisions. Run quarterly.</td></tr>
+          <tr><td>DAILY STANDUP</td><td>Aaron's morning check-in ritual. Type STATE in Claude Code. Read the response. Know what to do today. Takes 30 seconds. Replaces the corporate standup meeting.</td></tr>
+          <tr><td>WAIT FOR NATIVE</td><td>A feature that would be valuable but that the vendor (Anthropic, GitHub, etc.) will likely build natively within 3-6 months. Do not build a workaround — log it and wait.</td></tr>
+          <tr><td>LOSSLESS RECOVERY</td><td>The ability to resume work after any interruption — power failure, context reset, laptop switch — without losing progress. Achieved through SESSION-STATE.md, git commits, and LAST-RUN-SUMMARY.md.</td></tr>
         </tbody>
       </table>
     </section>
@@ -414,15 +422,65 @@
           </tr>
           <tr>
             <td class="fp-id">FP-006</td>
-            <td>Pentium Silver too slow for sustained Claude Code sessions — thermal throttling</td>
-            <td class="fp-score">7</td>
-            <td><span class="fp-badge fp-ongoing">Ongoing</span></td>
+            <td>Context rot — losing state between sessions</td>
+            <td class="fp-score">9</td>
+            <td><span class="fp-badge fp-fixed">Mitigated</span></td>
           </tr>
           <tr>
             <td class="fp-id">FP-007</td>
-            <td>Gmail drafts as external memory is fragile — no version control, easy to lose</td>
+            <td>Human backlog growing faster than Aaron can review</td>
             <td class="fp-score">6</td>
-            <td><span class="fp-badge fp-fixed">Fixed</span></td>
+            <td><span class="fp-badge fp-ongoing">Ongoing</span></td>
+          </tr>
+          <tr>
+            <td class="fp-id">FP-008</td>
+            <td>Retro blind spot — no native cross-session awareness in Claude Code</td>
+            <td class="fp-score">7</td>
+            <td><span class="fp-badge fp-logged">Wait for Native</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECTION 6 — WAIT FOR NATIVE               -->
+    <!-- ══════════════════════════════════════════ -->
+    <section class="lb-section" aria-label="Wait For Native">
+      <h2 class="lb-section-title">Wait For Native</h2>
+      <p style="color:var(--text-1);font-size:0.88rem;margin-bottom:1rem;">Features that would be valuable but that the vendor will likely ship natively. Do not build workarounds — log and wait.</p>
+      <table class="fp-table" role="table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Vendor</th>
+            <th>Est. Timeline</th>
+            <th>Current Workaround</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-0);font-weight:600;">Cross-session memory</td>
+            <td style="color:var(--text-1);">Anthropic</td>
+            <td style="color:var(--accent);font-family:var(--font-mono);">3–6 months</td>
+            <td style="color:var(--text-2);">SESSION-STATE.md + CLAUDE.md context injection</td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-0);font-weight:600;">Account-level Retro awareness</td>
+            <td style="color:var(--text-1);">Anthropic</td>
+            <td style="color:var(--accent);font-family:var(--font-mono);">3–6 months</td>
+            <td style="color:var(--text-2);">LAST-RUN-SUMMARY.md + "retro" trigger word</td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-0);font-weight:600;">Automated session handoff</td>
+            <td style="color:var(--text-1);">Anthropic</td>
+            <td style="color:var(--accent);font-family:var(--font-mono);">2–4 months</td>
+            <td style="color:var(--text-2);">Manual SESSION-STATE.md update at end of each session</td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-0);font-weight:600;">Claude persona customisation</td>
+            <td style="color:var(--text-1);">Anthropic</td>
+            <td style="color:var(--accent);font-family:var(--font-mono);">3–4 months</td>
+            <td style="color:var(--text-2);">CLAUDE.md standing rules + tone instructions</td>
           </tr>
         </tbody>
       </table>
