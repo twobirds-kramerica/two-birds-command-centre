@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Journey Timeline — Two Birds</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .timeline-wrap {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .timeline-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .timeline-header h1 {
+      color: var(--text-0);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .timeline-header p {
+      color: var(--text-1);
+      font-size: 0.95rem;
+    }
+    .stats-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .stat-box {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.5rem;
+      text-align: center;
+      min-width: 120px;
+    }
+    .stat-box .num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+    .stat-box .label {
+      font-size: 0.8rem;
+      color: var(--text-1);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .chart-container {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+    .chart-title {
+      color: var(--text-0);
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    .chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 320px;
+      padding-bottom: 2.5rem;
+      position: relative;
+      min-width: 700px;
+    }
+    .bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      min-width: 20px;
+    }
+    .bar {
+      width: 100%;
+      max-width: 28px;
+      border-radius: 3px 3px 0 0;
+      position: relative;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      min-height: 2px;
+    }
+    .bar:hover {
+      opacity: 0.85;
+    }
+    .bar-label {
+      position: absolute;
+      bottom: -2.2rem;
+      font-size: 0.6rem;
+      color: var(--text-2);
+      white-space: nowrap;
+      transform: rotate(-45deg);
+      transform-origin: top left;
+    }
+    .bar-count {
+      font-size: 0.65rem;
+      color: var(--text-1);
+      margin-bottom: 2px;
+      text-align: center;
+    }
+    .tooltip {
+      display: none;
+      position: fixed;
+      background: var(--bg-2);
+      border: 1px solid var(--border-hi);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      max-width: 360px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .tooltip.visible {
+      display: block;
+    }
+    .tooltip .tt-date {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .tooltip .tt-total {
+      color: var(--text-0);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .tooltip .tt-repos {
+      font-size: 0.75rem;
+      color: var(--text-1);
+      line-height: 1.5;
+    }
+    .tooltip .tt-repos span {
+      display: inline-block;
+      background: var(--bg-1);
+      border-radius: 3px;
+      padding: 0 4px;
+      margin: 1px 2px;
+    }
+    .tooltip .tt-commits {
+      font-size: 0.7rem;
+      color: var(--text-2);
+      margin-top: 0.5rem;
+      max-height: 120px;
+      overflow-y: auto;
+      line-height: 1.4;
+    }
+    .legend {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--text-1);
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+    .sprint-annotation {
+      background: rgba(248, 81, 73, 0.1);
+      border-left: 3px solid #f85149;
+      padding: 0.75rem 1rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin-bottom: 1rem;
+      color: var(--text-0);
+      font-size: 0.85rem;
+    }
+    .sprint-annotation strong {
+      color: #f85149;
+    }
+    .wave-section {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .wave-section h2 {
+      color: var(--text-0);
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+    .wave-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .wave-item:last-child {
+      border-bottom: none;
+    }
+    .wave-dates {
+      color: var(--text-2);
+      min-width: 100px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    .wave-desc {
+      color: var(--text-0);
+    }
+    .wave-count {
+      color: var(--accent);
+      font-weight: 700;
+      min-width: 70px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"          class="nav-link">Dashboard</a>
+      <a href="vault.html"          class="nav-link">Vault</a>
+      <a href="inbox.html"          class="nav-link">Inbox</a>
+      <a href="decisions.html"      class="nav-link">Decisions</a>
+      <a href="language-bank.html"  class="nav-link">Language</a>
+      <a href="prompt-library.html" class="nav-link">Prompts</a>
+      <a href="journey-timeline.html" class="nav-link active">Timeline</a>
+    </nav>
+  </header>
+
+  <div class="timeline-wrap">
+
+    <div class="timeline-header">
+      <h1>Commit Density Timeline</h1>
+      <p>Two Birds Innovation — March 1 to April 1, 2026</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box"><span class="num">443</span><span class="label">Total Commits</span></div>
+      <div class="stat-box"><span class="num">9</span><span class="label">Repos Active</span></div>
+      <div class="stat-box"><span class="num">73</span><span class="label">Peak Day</span></div>
+      <div class="stat-box"><span class="num">220</span><span class="label">Sprint (4 days)</span></div>
+      <div class="stat-box"><span class="num">24</span><span class="label">Active Days</span></div>
+    </div>
+
+    <div class="sprint-annotation">
+      <strong>The Sprint Wave:</strong> March 25–28 accounts for 220 commits — 50% of all work compressed into 4 days. Hover over bars for commit details.
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#58a6ff"></div> DCC</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3fb950"></div> Career Coach</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d29922"></div> Clarity</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0883e"></div> Aaron P</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a371f7"></div> TBI</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f85149"></div> Kevin's Apt</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#79c0ff"></div> Quality</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#56d364"></div> Cmd Centre</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e6edf3"></div> Portfolio</div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Daily Commits — March 1 to April 1, 2026</div>
+      <div class="chart" id="chart"></div>
+    </div>
+
+    <div class="wave-section">
+      <h2>The Sprint Wave</h2>
+      <div class="wave-item">
+        <span class="wave-dates">Mar 1–24</span>
+        <span class="wave-desc">Steady single-repo building. DCC core modules, glossary, accessibility.</span>
+        <span class="wave-count">121 commits</span>
+      </div>
+      <div class="wave-item">
+        <span class="wave-dates">Mar 25–28</span>
+        <span class="wave-desc">Four-day mega sprint. Career Coach, Kevin's Apt, Quality Dashboard all built. DCC expanded to 241 pages.</span>
+        <span class="wave-count">220 commits</span>
+      </div>
+      <div class="wave-item">
+        <span class="wave-dates">Mar 29–30</span>
+        <span class="wave-desc">Recovery. Stability fixes, monitoring, polish passes.</span>
+        <span class="wave-count">14 commits</span>
+      </div>
+      <div class="wave-item">
+        <span class="wave-dates">Mar 31</span>
+        <span class="wave-desc">Multi-repo day. Clarity, Aaron Patzalek, and Two Birds Innovation sites built from scratch.</span>
+        <span class="wave-count">30 commits</span>
+      </div>
+      <div class="wave-item">
+        <span class="wave-dates">Apr 1</span>
+        <span class="wave-desc">Sovereignty sprint. 6 founding documents. Journey archive. Prompt library. Timeline.</span>
+        <span class="wave-count">31 commits</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tooltip" id="tooltip">
+    <div class="tt-date"></div>
+    <div class="tt-total"></div>
+    <div class="tt-repos"></div>
+    <div class="tt-commits"></div>
+  </div>
+
+  <script>
+    var REPO_COLOURS = {
+      'dcc':        '#58a6ff',
+      'career':     '#3fb950',
+      'clarity':    '#d29922',
+      'aaron':      '#f0883e',
+      'tbi':        '#a371f7',
+      'kevins':     '#f85149',
+      'quality':    '#79c0ff',
+      'cmdcentre':  '#56d364',
+      'portfolio':  '#e6edf3'
+    };
+
+    var REPO_NAMES = {
+      'dcc':       'Digital Confidence',
+      'career':    'Career Coach',
+      'clarity':   'Clarity',
+      'aaron':     'Aaron Patzalek',
+      'tbi':       'Two Birds Innovation',
+      'kevins':    "Kevin's Apartment",
+      'quality':   'Quality Dashboard',
+      'cmdcentre': 'Command Centre',
+      'portfolio': 'Portfolio'
+    };
+
+    // Data: [date, {repo: count}, [notable commits]]
+    var DATA = [
+      ['Mar 1', {}, []],
+      ['Mar 2', {dcc:5}, ['Beta-ready overhaul','UI consolidation']],
+      ['Mar 3', {}, []],
+      ['Mar 4', {}, []],
+      ['Mar 5', {dcc:14}, ['2FA training','Device filtering','Overnight build report']],
+      ['Mar 6', {dcc:5}, ['Formspree feedback system']],
+      ['Mar 7', {dcc:26}, ['Beta readiness','Settings panel','Print stylesheet','Accessibility audit']],
+      ['Mar 8', {dcc:12}, ['Banner images','Footer standardised','Trust signals','Module intros']],
+      ['Mar 9', {}, []],
+      ['Mar 10', {dcc:2}, ['Banner revert','Feedback textarea fix']],
+      ['Mar 11', {}, []],
+      ['Mar 12', {}, []],
+      ['Mar 13', {}, []],
+      ['Mar 14', {dcc:6}, ['Module 8 expanded','Close button fix','New project guardrail']],
+      ['Mar 15', {dcc:1,portfolio:1}, ['Visual pipeline','Portfolio backlog init']],
+      ['Mar 16', {dcc:8,portfolio:2}, ['ImageFX prompts','Digital literacy stub']],
+      ['Mar 17', {dcc:7,portfolio:1}, ['Mobile responsiveness','Accessibility pass','Glossary 20 terms']],
+      ['Mar 18', {dcc:9,portfolio:2}, ['P3 prototype','Senior tech stars','iA interview prep']],
+      ['Mar 19', {}, []],
+      ['Mar 20', {}, []],
+      ['Mar 21', {dcc:4}, ['AEO optimisation','Heading hierarchy','Meta descriptions']],
+      ['Mar 22', {dcc:12,cmdcentre:6}, ['Glossary 200+ terms','Command Centre built','SEO audit']],
+      ['Mar 23', {dcc:8,kevins:6}, ["Kevin's apt v1.0",'Module 12','About page','Link checker']],
+      ['Mar 24', {dcc:5,kevins:5}, ['French bilingual sprint','MEGA production sprint','Kevin maps']],
+      ['Mar 25', {dcc:20,kevins:8,portfolio:1}, ['SEO audit','Beta recruiting','B2B outreach system','Street view photos']],
+      ['Mar 26', {dcc:58,career:2,kevins:1,quality:4}, ['15-phase DCC build','Career Coach v1.0','Quality dashboard']],
+      ['Mar 27', {dcc:62,career:2,kevins:2,quality:3,portfolio:6}, ['AEO 20 pages','Scam ecosystem','White label','B2B outreach 30 prospects']],
+      ['Mar 28', {dcc:41,career:2,kevins:2,quality:3,portfolio:5}, ['Modules 18-19','B2B emails','Salary negotiation','Overnight build 15 phases']],
+      ['Mar 29', {dcc:3,career:1,kevins:1}, ['Content freshness','Stability fixes']],
+      ['Mar 30', {dcc:5,career:1,kevins:2,portfolio:1}, ['Automated monitoring','Accessibility final','French content audit']],
+      ['Mar 31', {dcc:11,career:2,clarity:2,aaron:3,tbi:2,kevins:3,quality:2,portfolio:10}, ['Clarity built','Aaron Patzalek built','TBI built','B2B dashboard','HAL Stack foundation']],
+      ['Apr 1', {dcc:2,clarity:1,aaron:1,tbi:1,cmdcentre:2,portfolio:26}, ['Sovereignty sprint','Journey archive','Prompt library','Commit timeline']]
+    ];
+
+    var maxTotal = 0;
+    DATA.forEach(function(d) {
+      var t = 0;
+      for (var r in d[1]) t += d[1][r];
+      if (t > maxTotal) maxTotal = t;
+    });
+
+    var chart = document.getElementById('chart');
+    var tooltip = document.getElementById('tooltip');
+
+    DATA.forEach(function(d, i) {
+      var date = d[0];
+      var repos = d[1];
+      var commits = d[2];
+      var total = 0;
+      for (var r in repos) total += repos[r];
+
+      var group = document.createElement('div');
+      group.className = 'bar-group';
+
+      if (total > 0) {
+        var countEl = document.createElement('div');
+        countEl.className = 'bar-count';
+        countEl.textContent = total;
+        group.appendChild(countEl);
+      }
+
+      // Stacked bar
+      var repoOrder = ['portfolio','cmdcentre','quality','kevins','tbi','aaron','clarity','career','dcc'];
+      var barHeight = total > 0 ? Math.max((total / maxTotal) * 280, 4) : 0;
+
+      if (total > 0) {
+        var stackContainer = document.createElement('div');
+        stackContainer.style.display = 'flex';
+        stackContainer.style.flexDirection = 'column';
+        stackContainer.style.height = barHeight + 'px';
+        stackContainer.style.width = '100%';
+        stackContainer.style.maxWidth = '28px';
+        stackContainer.style.margin = '0 auto';
+        stackContainer.style.borderRadius = '3px 3px 0 0';
+        stackContainer.style.overflow = 'hidden';
+        stackContainer.style.cursor = 'pointer';
+
+        repoOrder.forEach(function(repo) {
+          if (repos[repo]) {
+            var seg = document.createElement('div');
+            seg.style.flex = repos[repo] + '';
+            seg.style.background = REPO_COLOURS[repo];
+            seg.style.minHeight = '2px';
+            stackContainer.appendChild(seg);
+          }
+        });
+
+        stackContainer.addEventListener('mouseenter', function(e) {
+          var tt = document.getElementById('tooltip');
+          tt.querySelector('.tt-date').textContent = date + ', 2026';
+          tt.querySelector('.tt-total').textContent = total + ' commit' + (total !== 1 ? 's' : '');
+
+          var repoHtml = '';
+          for (var r in repos) {
+            repoHtml += '<span style="border-left:3px solid ' + REPO_COLOURS[r] + ';padding-left:4px">'
+              + REPO_NAMES[r] + ': ' + repos[r] + '</span> ';
+          }
+          tt.querySelector('.tt-repos').innerHTML = repoHtml;
+          tt.querySelector('.tt-commits').textContent = commits.join(' · ');
+          tt.classList.add('visible');
+        });
+
+        stackContainer.addEventListener('mousemove', function(e) {
+          var tt = document.getElementById('tooltip');
+          var x = e.clientX + 15;
+          var y = e.clientY - 10;
+          if (x + 360 > window.innerWidth) x = e.clientX - 375;
+          if (y + 200 > window.innerHeight) y = e.clientY - 200;
+          tt.style.left = x + 'px';
+          tt.style.top = y + 'px';
+        });
+
+        stackContainer.addEventListener('mouseleave', function() {
+          document.getElementById('tooltip').classList.remove('visible');
+        });
+
+        group.appendChild(stackContainer);
+      }
+
+      // Date label
+      var label = document.createElement('div');
+      label.className = 'bar-label';
+      label.textContent = date;
+      group.appendChild(label);
+
+      // Highlight sprint days
+      if (i >= 24 && i <= 27) {
+        group.style.background = 'rgba(248,81,73,0.07)';
+        group.style.borderRadius = '4px 4px 0 0';
+      }
+
+      chart.appendChild(group);
+    });
+  </script>
+
+</body>
+</html>
