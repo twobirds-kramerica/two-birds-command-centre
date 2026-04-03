@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Human Sprint — Two Birds Command Centre</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .hs-wrap { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    .hs-section { background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+    .hs-section-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+    .hs-section-title .count { background: var(--bg-2); border-radius: 10px; padding: 0.1rem 0.5rem; font-size: 0.7rem; color: var(--text-1); }
+
+    /* Daily standup */
+    .standup-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text-0); line-height: 1.5; }
+    .standup-item:last-child { border-bottom: none; }
+    .standup-item input[type=checkbox] { margin-top: 0.25rem; width: 18px; height: 18px; accent-color: var(--s-active); flex-shrink: 0; cursor: pointer; }
+    .standup-item.done label { text-decoration: line-through; color: var(--text-2); }
+    .standup-item code { background: var(--bg-2); padding: 0.15rem 0.4rem; border-radius: 3px; font-family: var(--font-mono); font-size: 0.8rem; }
+
+    /* Task items */
+    .task-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border); border-radius: var(--radius); cursor: grab; transition: background 0.15s; }
+    .task-item:hover { background: var(--bg-2); }
+    .task-item:last-child { border-bottom: none; }
+    .task-item.dragging { opacity: 0.4; }
+    .task-item input[type=checkbox] { margin-top: 0.2rem; width: 18px; height: 18px; accent-color: var(--s-active); flex-shrink: 0; cursor: pointer; }
+    .task-text { flex: 1; font-size: 0.88rem; color: var(--text-0); line-height: 1.4; }
+    .task-item.completed .task-text { text-decoration: line-through; color: var(--text-2); }
+    .task-priority { font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 10px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.03em; }
+    .p1 { background: var(--s-blocked-bg); color: var(--s-blocked); }
+    .p2 { background: var(--s-queued-bg); color: var(--s-queued); }
+    .p3 { background: var(--bg-2); color: var(--text-2); }
+    .task-delete { background: none; border: none; color: var(--text-2); cursor: pointer; font-size: 0.9rem; padding: 0 0.3rem; flex-shrink: 0; }
+    .task-delete:hover { color: var(--s-blocked); }
+    .task-time { font-size: 0.72rem; color: var(--text-2); font-family: var(--font-mono); flex-shrink: 0; }
+
+    /* Collapsible */
+    .hs-toggle { cursor: pointer; user-select: none; }
+    .hs-toggle::before { content: '▸ '; }
+    .hs-toggle.open::before { content: '▾ '; }
+    .hs-collapsible { display: none; }
+    .hs-collapsible.open { display: block; }
+
+    /* Add form */
+    .add-form { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .add-input { flex: 1; background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.55rem 0.75rem; color: var(--text-0); font-family: var(--font); font-size: 0.88rem; }
+    .add-input:focus { outline: none; border-color: var(--accent); }
+    .add-select { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.55rem 0.5rem; color: var(--text-0); font-family: var(--font); font-size: 0.82rem; cursor: pointer; }
+    .add-btn { background: var(--accent-dim); color: #fff; border: none; border-radius: var(--radius); padding: 0.55rem 1.2rem; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: var(--font); }
+    .add-btn:hover { background: var(--accent); }
+
+    /* Action buttons */
+    .hs-actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+    .hs-btn { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.4rem 0.9rem; color: var(--text-1); font-size: 0.78rem; cursor: pointer; font-family: var(--font); }
+    .hs-btn:hover { border-color: var(--border-hi); color: var(--text-0); }
+    .hs-btn.danger { border-color: var(--s-blocked-bg); color: var(--s-blocked); }
+    .hs-btn.danger:hover { background: var(--s-blocked-bg); }
+
+    /* Links footer */
+    .hs-links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .hs-link { display: inline-block; background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.4rem 0.8rem; font-size: 0.78rem; color: var(--accent); text-decoration: none; font-family: var(--font-mono); }
+    .hs-link:hover { border-color: var(--accent-dim); background: var(--bg-3); }
+
+    /* Empty state */
+    .empty-state { color: var(--text-2); font-size: 0.85rem; padding: 0.5rem 0; font-style: italic; }
+
+    /* Print */
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .site-header, .hs-actions, .add-form, .task-delete, .hs-links, .hs-btn { display: none !important; }
+      .hs-section { border: 1px solid #ccc; break-inside: avoid; }
+      .hs-section-title { color: #333; }
+      .task-text, .standup-item label { color: #000 !important; }
+      .p1 { background: #fdd; color: #c00; }
+      .p2 { background: #ffd; color: #960; }
+      .p3 { background: #eee; color: #666; }
+    }
+
+    @media (max-width: 640px) {
+      .add-form { flex-wrap: wrap; }
+      .add-input { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"            class="nav-link">Dashboard</a>
+      <a href="vault.html"            class="nav-link">Vault</a>
+      <a href="inbox.html"            class="nav-link">Inbox</a>
+      <a href="decisions.html"        class="nav-link">Decisions</a>
+      <a href="language-bank.html"    class="nav-link">Language</a>
+      <a href="prompt-library.html"   class="nav-link">Prompts</a>
+      <a href="journey-timeline.html" class="nav-link">Timeline</a>
+      <a href="human-sprint.html"     class="nav-link active">Human Sprint</a>
+    </nav>
+  </header>
+
+  <div class="hs-wrap">
+
+    <div class="page-title">
+      <h1>Human Sprint</h1>
+      <p style="color:var(--text-1);font-size:0.88rem;margin-top:0.3rem;">Your daily activity manager. All data stored in your browser — survives without Claude.</p>
+    </div>
+
+    <!-- 1. DAILY STANDUP -->
+    <div class="hs-section" id="standup-section">
+      <div class="hs-section-title">Daily Standup Checklist</div>
+      <div id="standup-list">
+        <div class="standup-item" data-key="standup-retro">
+          <input type="checkbox" id="su1"><label for="su1">Open Windows Terminal → <code>cd C:\twobirds\two-birds-portfolio</code> → <code>cat logs/RETRO.md</code></label>
+        </div>
+        <div class="standup-item" data-key="standup-sprint">
+          <input type="checkbox" id="su2"><label for="su2">Open Claude Code → type: <code>next sprint</code></label>
+        </div>
+        <div class="standup-item" data-key="standup-gmail">
+          <input type="checkbox" id="su3"><label for="su3">Check Gmail drafts for overnight human actions</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ACTIVE HUMAN SPRINT -->
+    <div class="hs-section">
+      <div class="hs-section-title">Active Human Sprint <span class="count" id="active-count">0</span></div>
+      <div id="active-list"></div>
+      <div class="empty-state" id="active-empty" style="display:none;">All tasks done. Nice work.</div>
+    </div>
+
+    <!-- 3. SOMEDAY / BACKLOG -->
+    <div class="hs-section">
+      <div class="hs-section-title hs-toggle" id="backlog-toggle">Someday / Backlog <span class="count" id="backlog-count">0</span></div>
+      <div class="hs-collapsible" id="backlog-list"></div>
+    </div>
+
+    <!-- 4. ADD NEW TASK -->
+    <div class="hs-section">
+      <div class="hs-section-title">Add New Task</div>
+      <div class="add-form">
+        <input type="text" class="add-input" id="new-task-input" placeholder="What needs doing?" autocomplete="off">
+        <select class="add-select" id="new-task-priority">
+          <option value="P1">P1</option>
+          <option value="P2" selected>P2</option>
+          <option value="P3">P3</option>
+          <option value="backlog">Backlog</option>
+        </select>
+        <button class="add-btn" id="add-task-btn">Add</button>
+      </div>
+    </div>
+
+    <!-- 5. DONE TODAY -->
+    <div class="hs-section">
+      <div class="hs-section-title hs-toggle open" id="done-toggle">Done Today <span class="count" id="done-count">0</span></div>
+      <div class="hs-collapsible open" id="done-list"></div>
+      <div class="empty-state" id="done-empty">Nothing completed yet today.</div>
+      <div class="hs-actions">
+        <button class="hs-btn" onclick="clearDone()">Clear Done</button>
+        <button class="hs-btn" onclick="window.print()">Print Sprint</button>
+        <button class="hs-btn danger" onclick="startFresh()">Start Fresh</button>
+      </div>
+    </div>
+
+    <!-- 6. KEY LINKS -->
+    <div class="hs-section">
+      <div class="hs-section-title">Key Links</div>
+      <div class="hs-links">
+        <a href="http://localhost:5678" class="hs-link" target="_blank" rel="noopener">n8n Dashboard</a>
+        <a href="index.html" class="hs-link">Command Centre</a>
+        <a href="https://github.com/twobirds-kramerica" class="hs-link" target="_blank" rel="noopener">GitHub Org</a>
+        <a href="https://raw.githubusercontent.com/twobirds-kramerica/two-birds-portfolio/master/logs/RETRO.md" class="hs-link" target="_blank" rel="noopener">RETRO.md (raw)</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    var STORAGE_KEY = 'human-sprint-data';
+    var STANDUP_KEY = 'human-sprint-standup';
+
+    // ── Default tasks ──
+    var DEFAULT_TASKS = [
+      { id: 't1', text: 'P1: B2B library emails — outreach dashboard has 404 bug, fix first', priority: 'P1', done: false, doneAt: null, backlog: false },
+      { id: 't2', text: 'P1: Dictate Mike K research needs to Claude', priority: 'P1', done: false, doneAt: null, backlog: false },
+      { id: 't3', text: 'P2: Codeberg mirror — top 3 repos (see PowerShell quick ref in Gmail)', priority: 'P2', done: false, doneAt: null, backlog: false },
+      { id: 't4', text: 'P2: GitHub backup owner account', priority: 'P2', done: false, doneAt: null, backlog: false },
+      { id: 't5', text: 'P2: Silver laptop sleep fix — powercfg /change standby-timeout-ac 0', priority: 'P2', done: false, doneAt: null, backlog: false },
+      { id: 't6', text: 'P2: n8n first workflow — go to http://localhost:5678', priority: 'P2', done: false, doneAt: null, backlog: false },
+      { id: 't7', text: 'P3: LinkedIn Post 1 — content ready in Gmail drafts', priority: 'P3', done: false, doneAt: null, backlog: false },
+      { id: 't8', text: 'P3: Show elite karate site to school owner', priority: 'P3', done: false, doneAt: null, backlog: false },
+      { id: 't9', text: 'LightRAG install (Sprint 9)', priority: 'P3', done: false, doneAt: null, backlog: true },
+      { id: 't10', text: 'Codeberg full setup — all repos', priority: 'P3', done: false, doneAt: null, backlog: true },
+      { id: 't11', text: 'New machine setup (new laptop + desktop)', priority: 'P3', done: false, doneAt: null, backlog: true }
+    ];
+
+    // ── State ──
+    var tasks = loadTasks();
+    var dragSrcId = null;
+
+    function loadTasks() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch(e) {}
+      return JSON.parse(JSON.stringify(DEFAULT_TASKS));
+    }
+    function saveTasks() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); } catch(e) {}
+    }
+    function genId() { return 't' + Date.now() + Math.random().toString(36).substr(2, 4); }
+    function estNow() {
+      return new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto', hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+    function todayKey() {
+      return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+    }
+
+    // ── Auto-reset standup at midnight ──
+    function loadStandup() {
+      try {
+        var raw = JSON.parse(localStorage.getItem(STANDUP_KEY) || '{}');
+        if (raw.date === todayKey()) return raw.checks || {};
+        return {};
+      } catch(e) { return {}; }
+    }
+    function saveStandup(checks) {
+      try { localStorage.setItem(STANDUP_KEY, JSON.stringify({ date: todayKey(), checks: checks })); } catch(e) {}
+    }
+
+    // ── Clear done items older than today ──
+    function autoClearOldDone() {
+      var today = todayKey();
+      var changed = false;
+      tasks = tasks.filter(function(t) {
+        if (t.done && t.doneAt && !t.doneAt.startsWith(today)) { changed = true; return false; }
+        return true;
+      });
+      if (changed) saveTasks();
+    }
+
+    // ── Render ──
+    function render() {
+      autoClearOldDone();
+
+      var active = tasks.filter(function(t) { return !t.done && !t.backlog; });
+      var backlog = tasks.filter(function(t) { return !t.done && t.backlog; });
+      var done = tasks.filter(function(t) { return t.done; });
+
+      // Sort active by priority
+      var pOrder = { P1: 0, P2: 1, P3: 2 };
+      active.sort(function(a, b) { return (pOrder[a.priority] || 2) - (pOrder[b.priority] || 2); });
+
+      renderList('active-list', active, false);
+      renderList('backlog-list', backlog, false);
+      renderList('done-list', done, true);
+
+      document.getElementById('active-count').textContent = active.length;
+      document.getElementById('backlog-count').textContent = backlog.length;
+      document.getElementById('done-count').textContent = done.length;
+      document.getElementById('active-empty').style.display = active.length ? 'none' : 'block';
+      document.getElementById('done-empty').style.display = done.length ? 'none' : 'block';
+    }
+
+    function renderList(containerId, items, isDone) {
+      var el = document.getElementById(containerId);
+      if (!items.length && !isDone) { el.innerHTML = ''; return; }
+      el.innerHTML = items.map(function(t) {
+        var pClass = t.priority === 'P1' ? 'p1' : t.priority === 'P2' ? 'p2' : 'p3';
+        return '<div class="task-item' + (t.done ? ' completed' : '') + '" data-id="' + t.id + '" draggable="' + (!t.done) + '">' +
+          '<input type="checkbox" ' + (t.done ? 'checked' : '') + ' data-toggle="' + t.id + '">' +
+          '<span class="task-text">' + esc(t.text) + '</span>' +
+          '<span class="task-priority ' + pClass + '">' + esc(t.priority) + '</span>' +
+          (t.done && t.doneAt ? '<span class="task-time">' + esc(t.doneAt.split(' ')[1] || t.doneAt) + '</span>' : '') +
+          '<button class="task-delete" data-delete="' + t.id + '" title="Delete" aria-label="Delete task">×</button>' +
+          '</div>';
+      }).join('');
+    }
+
+    function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // ── Events ──
+    document.addEventListener('change', function(e) {
+      // Standup checkboxes
+      if (e.target.closest('.standup-item')) {
+        var item = e.target.closest('.standup-item');
+        item.classList.toggle('done', e.target.checked);
+        var checks = loadStandup();
+        checks[item.dataset.key] = e.target.checked;
+        saveStandup(checks);
+        return;
+      }
+      // Task checkboxes
+      var toggleId = e.target.dataset.toggle;
+      if (toggleId) {
+        var task = tasks.find(function(t) { return t.id === toggleId; });
+        if (task) {
+          task.done = e.target.checked;
+          task.doneAt = e.target.checked ? todayKey() + ' ' + estNow() : null;
+          if (e.target.checked) task.backlog = false;
+          saveTasks();
+          render();
+        }
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      // Delete buttons
+      var delId = e.target.dataset.delete;
+      if (delId) {
+        tasks = tasks.filter(function(t) { return t.id !== delId; });
+        saveTasks();
+        render();
+        return;
+      }
+      // Toggle collapsibles
+      if (e.target.id === 'backlog-toggle' || e.target.id === 'done-toggle') {
+        e.target.classList.toggle('open');
+        var listId = e.target.id === 'backlog-toggle' ? 'backlog-list' : 'done-list';
+        document.getElementById(listId).classList.toggle('open');
+      }
+    });
+
+    // ── Add task ──
+    document.getElementById('add-task-btn').addEventListener('click', addTask);
+    document.getElementById('new-task-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') addTask();
+    });
+
+    function addTask() {
+      var input = document.getElementById('new-task-input');
+      var text = input.value.trim();
+      if (!text) return;
+      var priority = document.getElementById('new-task-priority').value;
+      var isBacklog = priority === 'backlog';
+      tasks.push({ id: genId(), text: text, priority: isBacklog ? 'P3' : priority, done: false, doneAt: null, backlog: isBacklog });
+      saveTasks();
+      input.value = '';
+      render();
+    }
+
+    // ── Drag and drop ──
+    document.addEventListener('dragstart', function(e) {
+      var item = e.target.closest('.task-item');
+      if (!item) return;
+      dragSrcId = item.dataset.id;
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    document.addEventListener('dragover', function(e) {
+      var item = e.target.closest('.task-item');
+      if (item && !item.classList.contains('completed')) e.preventDefault();
+    });
+    document.addEventListener('drop', function(e) {
+      e.preventDefault();
+      var target = e.target.closest('.task-item');
+      if (!target || !dragSrcId) return;
+      var targetId = target.dataset.id;
+      if (dragSrcId === targetId) return;
+      var srcIdx = tasks.findIndex(function(t) { return t.id === dragSrcId; });
+      var tgtIdx = tasks.findIndex(function(t) { return t.id === targetId; });
+      if (srcIdx === -1 || tgtIdx === -1) return;
+      var moved = tasks.splice(srcIdx, 1)[0];
+      tasks.splice(tgtIdx, 0, moved);
+      saveTasks();
+      render();
+    });
+    document.addEventListener('dragend', function(e) {
+      dragSrcId = null;
+      document.querySelectorAll('.dragging').forEach(function(el) { el.classList.remove('dragging'); });
+    });
+
+    // ── Global actions ──
+    window.clearDone = function() {
+      tasks = tasks.filter(function(t) { return !t.done; });
+      saveTasks();
+      render();
+    };
+    window.startFresh = function() {
+      if (!confirm('Reset everything? This clears all tasks and starts with the default list.')) return;
+      tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+      saveTasks();
+      try { localStorage.removeItem(STANDUP_KEY); } catch(e) {}
+      document.querySelectorAll('.standup-item input').forEach(function(cb) { cb.checked = false; });
+      document.querySelectorAll('.standup-item').forEach(function(el) { el.classList.remove('done'); });
+      render();
+    };
+
+    // ── Init standup state ──
+    var checks = loadStandup();
+    document.querySelectorAll('.standup-item').forEach(function(item) {
+      var cb = item.querySelector('input');
+      if (checks[item.dataset.key]) {
+        cb.checked = true;
+        item.classList.add('done');
+      }
+    });
+
+    // ── Init ──
+    render();
+  })();
+  </script>
+
+</body>
+</html>
