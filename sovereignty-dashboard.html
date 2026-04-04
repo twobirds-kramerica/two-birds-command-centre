@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sovereignty Dashboard — Two Birds Command Centre</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* ── Float Free Index Styles ── */
+    .sov-wrap { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+    /* ── Hero Score ── */
+    .sov-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding: 2rem 1rem;
+    }
+    .score-ring-wrap {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin-bottom: 1.2rem;
+    }
+    .score-ring-wrap svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .score-ring-bg {
+      fill: none;
+      stroke: var(--bg-2);
+      stroke-width: 10;
+    }
+    .score-ring-fill {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s ease-out, stroke 0.3s;
+    }
+    .score-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .score-number {
+      font-size: 2.6rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+    .score-total {
+      font-size: 0.85rem;
+      color: var(--text-2);
+      font-family: var(--font-mono);
+    }
+    .sov-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-1);
+      text-align: center;
+      max-width: 540px;
+    }
+
+    /* Colour classes */
+    .clr-red   { color: var(--s-blocked); }
+    .clr-amber { color: var(--s-queued); }
+    .clr-green { color: var(--s-active); }
+    .stroke-red   { stroke: var(--s-blocked); }
+    .stroke-amber { stroke: var(--s-queued); }
+    .stroke-green { stroke: var(--s-active); }
+
+    /* ── Category Cards ── */
+    .sov-grid {
+      display: grid;
+      gap: 1.2rem;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      margin-bottom: 2.5rem;
+    }
+    .sov-card {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.2rem 1.4rem;
+      transition: border-color 0.15s;
+    }
+    .sov-card:hover { border-color: var(--border-hi); }
+    .sov-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+    .sov-card-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-0);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sov-card-icon {
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .sov-card-score {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    /* Progress bar */
+    .sov-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-2);
+      border-radius: 3px;
+      margin-bottom: 0.9rem;
+      overflow: hidden;
+    }
+    .sov-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s ease-out;
+    }
+    .bar-red   { background: var(--s-blocked); }
+    .bar-amber { background: var(--s-queued); }
+    .bar-green { background: var(--s-active); }
+
+    /* Checklist */
+    .sov-checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sov-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.35rem 0;
+      font-size: 0.84rem;
+      color: var(--text-1);
+      line-height: 1.45;
+    }
+    .sov-checklist li + li {
+      border-top: 1px solid var(--border);
+    }
+    .sov-check {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      margin-top: 1px;
+    }
+    .sov-check.done {
+      color: var(--s-active);
+      font-weight: 700;
+    }
+    .sov-check.pending {
+      color: var(--text-2);
+    }
+    .sov-item-text.done {
+      color: var(--text-0);
+    }
+    .sov-item-text.pending {
+      color: var(--text-2);
+    }
+    .sov-item-pts {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-2);
+      flex-shrink: 0;
+      padding-left: 0.5rem;
+    }
+
+    /* ── Footer ── */
+    .sov-footer {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-2);
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .sov-footer span + span::before {
+      content: '·';
+      margin: 0 0.75rem;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .site-header { display: none !important; }
+      .sov-card { border: 1px solid #ccc; break-inside: avoid; }
+      .sov-card-name, .sov-card-score { color: #000 !important; }
+      .sov-checklist li { color: #333 !important; }
+      .score-number { color: #000 !important; }
+      .sov-footer { color: #666 !important; }
+      .sov-bar-track { background: #ddd; }
+    }
+
+    @media (max-width: 640px) {
+      .sov-grid { grid-template-columns: 1fr; }
+      .score-ring-wrap { width: 150px; height: 150px; }
+      .score-number { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"            class="nav-link">Dashboard</a>
+      <a href="vault.html"            class="nav-link">Vault</a>
+      <a href="inbox.html"            class="nav-link">Inbox</a>
+      <a href="decisions.html"        class="nav-link">Decisions</a>
+      <a href="language-bank.html"    class="nav-link">Language</a>
+      <a href="prompt-library.html"   class="nav-link">Prompts</a>
+      <a href="journey-timeline.html" class="nav-link">Timeline</a>
+      <a href="human-sprint.html"     class="nav-link">Human Sprint</a>
+      <a href="sovereignty-dashboard.html" class="nav-link active">Sovereignty</a>
+    </nav>
+  </header>
+
+  <div class="sov-wrap">
+
+    <div class="page-title">
+      <h1>Float Free Index</h1>
+      <p class="sov-subtitle">Two Birds vendor independence scorecard — can we survive without any single vendor?</p>
+    </div>
+
+    <!-- ── Hero Score Ring ── -->
+    <div class="sov-hero" aria-label="Total sovereignty score">
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="score-ring-bg" cx="50" cy="50" r="42"></circle>
+          <circle class="score-ring-fill" id="score-ring" cx="50" cy="50" r="42"
+                  stroke-dasharray="263.89"
+                  stroke-dashoffset="263.89"></circle>
+        </svg>
+        <div class="score-label">
+          <div class="score-number" id="score-display">0</div>
+          <div class="score-total">/ 100</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Category Cards ── -->
+    <div class="sov-grid" id="sov-grid"></div>
+
+    <!-- ── Footer ── -->
+    <div class="sov-footer">
+      <span>Last audited: April 4, 2026</span>
+      <span>Next review: July 4, 2026</span>
+    </div>
+
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ── Sovereignty Data (static snapshot) ──
+    var categories = [
+      {
+        name: 'Code Independence',
+        icon: '\u{1F4BB}',
+        maxPts: 20,
+        items: [
+          { text: 'GitHub primary', pts: 5, done: true },
+          { text: 'Local backup on C:\\twobirds', pts: 5, done: true },
+          { text: 'Codeberg mirror configured', pts: 5, done: false },
+          { text: 'Self-hosted git documented', pts: 5, done: false }
+        ]
+      },
+      {
+        name: 'Hosting Independence',
+        icon: '\u{1F310}',
+        maxPts: 20,
+        items: [
+          { text: 'GitHub Pages primary', pts: 5, done: true },
+          { text: 'Cloudflare Pages backup live', pts: 10, done: false },
+          { text: 'Self-hosted option documented', pts: 5, done: false }
+        ]
+      },
+      {
+        name: 'AI Independence',
+        icon: '\u{1F916}',
+        maxPts: 20,
+        items: [
+          { text: 'LLM portability layer built', pts: 10, done: true },
+          { text: 'OpenAI fallback tested', pts: 5, done: false },
+          { text: 'Ollama local documented', pts: 5, done: true }
+        ]
+      },
+      {
+        name: 'Secrets Independence',
+        icon: '\u{1F512}',
+        maxPts: 15,
+        items: [
+          { text: 'Primary password manager', pts: 5, done: true },
+          { text: '.env + .gitignore on all repos', pts: 5, done: true },
+          { text: 'Bitwarden backup', pts: 5, done: false }
+        ]
+      },
+      {
+        name: 'Automation Independence',
+        icon: '\u{2699}\u{FE0F}',
+        maxPts: 15,
+        items: [
+          { text: 'n8n local installed', pts: 5, done: false },
+          { text: 'Windows Task Scheduler overnight', pts: 5, done: true },
+          { text: 'Cron backup documented', pts: 5, done: false }
+        ]
+      },
+      {
+        name: 'Forms Independence',
+        icon: '\u{1F4E8}',
+        maxPts: 10,
+        items: [
+          { text: 'Formspree primary', pts: 3, done: true },
+          { text: 'Web3Forms backup', pts: 3, done: true },
+          { text: 'n8n self-hosted option', pts: 4, done: false }
+        ]
+      }
+    ];
+
+    // ── Calculate scores ──
+    var totalScore = 0;
+    var totalMax = 0;
+    categories.forEach(function(cat) {
+      cat.score = 0;
+      cat.items.forEach(function(item) {
+        if (item.done) cat.score += item.pts;
+      });
+      totalScore += cat.score;
+      totalMax += cat.maxPts;
+    });
+
+    // ── Colour helper ──
+    function getColourClass(score, max) {
+      var pct = (score / max) * 100;
+      if (pct >= 70) return 'green';
+      if (pct >= 40) return 'amber';
+      return 'red';
+    }
+
+    // ── Render hero ring ──
+    var circumference = 2 * Math.PI * 42; // ~263.89
+    var ring = document.getElementById('score-ring');
+    var display = document.getElementById('score-display');
+    var colour = getColourClass(totalScore, totalMax);
+
+    ring.classList.add('stroke-' + colour);
+    display.classList.add('clr-' + colour);
+
+    // Animate after a short delay
+    requestAnimationFrame(function() {
+      setTimeout(function() {
+        var offset = circumference - (totalScore / totalMax) * circumference;
+        ring.style.strokeDashoffset = offset;
+      }, 100);
+    });
+
+    // Animate number count-up
+    var duration = 1200;
+    var start = performance.now();
+    function animateCount(now) {
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      display.textContent = Math.round(totalScore * eased);
+      if (progress < 1) requestAnimationFrame(animateCount);
+    }
+    requestAnimationFrame(animateCount);
+
+    // ── Render category cards ──
+    var grid = document.getElementById('sov-grid');
+    grid.innerHTML = categories.map(function(cat) {
+      var pct = Math.round((cat.score / cat.maxPts) * 100);
+      var clr = getColourClass(cat.score, cat.maxPts);
+      var itemsHtml = cat.items.map(function(item) {
+        var state = item.done ? 'done' : 'pending';
+        var icon = item.done ? '\u2713' : '\u25CB';
+        return '<li>' +
+          '<span class="sov-check ' + state + '" aria-hidden="true">' + icon + '</span>' +
+          '<span class="sov-item-text ' + state + '">' + esc(item.text) + '</span>' +
+          '<span class="sov-item-pts">' + item.pts + ' pts</span>' +
+          '</li>';
+      }).join('');
+
+      return '<div class="sov-card">' +
+        '<div class="sov-card-header">' +
+          '<div class="sov-card-name">' +
+            '<span class="sov-card-icon" aria-hidden="true">' + cat.icon + '</span>' +
+            esc(cat.name) +
+          '</div>' +
+          '<div class="sov-card-score clr-' + clr + '">' + cat.score + '/' + cat.maxPts + '</div>' +
+        '</div>' +
+        '<div class="sov-bar-track"><div class="sov-bar-fill bar-' + clr + '" style="width:' + pct + '%"></div></div>' +
+        '<ul class="sov-checklist">' + itemsHtml + '</ul>' +
+        '</div>';
+    }).join('');
+
+    function esc(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+  })();
+  </script>
+
+</body>
+</html>
