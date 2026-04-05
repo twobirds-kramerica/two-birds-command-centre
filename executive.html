@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en-CA" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Executive Summary — Two Birds Command Centre</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* ── Executive page-specific styles ── */
+
+    /* Level 1 — Stat cards */
+    .exec-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .exec-card {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+    }
+    .exec-card-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-2);
+      margin-bottom: 0.5rem;
+    }
+    .exec-card-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .exec-card-sub {
+      font-size: 0.8rem;
+      color: var(--text-1);
+      margin-top: 0.35rem;
+    }
+
+    /* Colour helpers */
+    .clr-red   { color: #f85149; }
+    .clr-amber { color: #d29922; }
+    .clr-green { color: #3fb950; }
+
+    /* Product pills row */
+    .product-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+    }
+    .product-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      line-height: 1.4;
+    }
+    .pill-green  { background: #0d3320; color: #3fb950; }
+    .pill-amber  { background: #3d2e00; color: #d29922; }
+    .pill-red    { background: #3d0f0d; color: #f85149; }
+
+    /* Human actions box */
+    .human-actions {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .human-actions h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text-0);
+    }
+    .human-actions ol {
+      list-style: none;
+      counter-reset: actions;
+      padding: 0;
+    }
+    .human-actions li {
+      counter-increment: actions;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      font-size: 0.92rem;
+      color: var(--text-0);
+    }
+    .human-actions li:last-child { border-bottom: none; }
+    .human-actions li::before {
+      content: counter(actions);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .action-time {
+      font-size: 0.78rem;
+      color: var(--text-2);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* ── Level 2 — Product scores table ── */
+    .section-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-0);
+      margin: 2rem 0 0.75rem;
+    }
+    .score-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 2rem;
+    }
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .score-table th {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      font-weight: 600;
+      color: var(--text-1);
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    .score-table td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .score-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-0);
+    }
+    .score-table td:last-child {
+      font-weight: 700;
+    }
+    .score-table tbody tr:hover {
+      background: var(--bg-2);
+    }
+    .cell-green { color: #3fb950; }
+    .cell-amber { color: #d29922; }
+    .cell-red   { color: #f85149; }
+
+    /* ── Revenue bridge ── */
+    .revenue-bridge {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .revenue-bridge h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-0);
+      margin-bottom: 1rem;
+    }
+    .bridge-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+      height: 200px;
+      position: relative;
+      padding-bottom: 2rem;
+    }
+    .bridge-target {
+      position: absolute;
+      left: 0;
+      right: 0;
+      /* $10,000 target = 66.7% of $15,000 max */
+      bottom: calc(2rem + (200px - 2rem) * 0.667);
+      border-top: 2px dashed #d29922;
+      z-index: 1;
+    }
+    .bridge-target-label {
+      position: absolute;
+      right: 0;
+      top: -1.2rem;
+      font-size: 0.7rem;
+      color: #d29922;
+      font-weight: 600;
+    }
+    .bridge-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      position: relative;
+    }
+    .bridge-bar {
+      width: 100%;
+      max-width: 64px;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      z-index: 2;
+      transition: height 0.3s ease;
+    }
+    .bridge-bar-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-0);
+      margin-bottom: 0.3rem;
+      text-align: center;
+    }
+    .bridge-month {
+      position: absolute;
+      bottom: 0;
+      font-size: 0.78rem;
+      color: var(--text-1);
+      font-weight: 600;
+    }
+
+    /* ── Level 3 — Details sections ── */
+    .deep-dive {
+      margin-top: 2rem;
+    }
+    .deep-dive details {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 0.75rem;
+    }
+    .deep-dive summary {
+      padding: 0.85rem 1.25rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text-0);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .deep-dive summary::-webkit-details-marker { display: none; }
+    .deep-dive summary::before {
+      content: "\25B6";
+      font-size: 0.65rem;
+      color: var(--text-2);
+      transition: transform 0.15s;
+    }
+    .deep-dive details[open] summary::before {
+      transform: rotate(90deg);
+    }
+    .deep-dive .detail-body {
+      padding: 0 1.25rem 1rem;
+      font-size: 0.88rem;
+      color: var(--text-1);
+      line-height: 1.65;
+    }
+    .deep-dive .detail-body ul {
+      padding-left: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    .deep-dive .detail-body li {
+      margin-bottom: 0.35rem;
+    }
+    .deep-dive .detail-body a {
+      color: var(--accent);
+    }
+
+    /* ── Footer ── */
+    .exec-footer {
+      margin-top: 3rem;
+      padding: 1.25rem 0;
+      border-top: 1px solid var(--border);
+      text-align: centre;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-2);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .exec-stats {
+        grid-template-columns: 1fr;
+      }
+      .bridge-chart {
+        height: 160px;
+      }
+      .score-table {
+        font-size: 0.82rem;
+      }
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff; color: #000; }
+      .site-header { position: static; border-bottom: 2px solid #000; }
+      .nav-link { color: #333; }
+      .exec-card { border-color: #ccc; }
+      .deep-dive details { break-inside: avoid; }
+      .deep-dive details[open] .detail-body { display: block; }
+      .bridge-bar { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .clr-red, .cell-red { color: #c00; }
+      .clr-amber, .cell-amber { color: #996600; }
+      .clr-green, .cell-green { color: #060; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-logo">
+      <span class="logo-mark">&gt;&lt;</span> Two Birds — Command Centre
+    </div>
+    <nav class="site-nav" aria-label="Pages">
+      <a href="index.html"               class="nav-link">Dashboard</a>
+      <a href="vault.html"               class="nav-link">Vault</a>
+      <a href="inbox.html"               class="nav-link">Inbox</a>
+      <a href="decisions.html"           class="nav-link">Decisions</a>
+      <a href="language-bank.html"       class="nav-link">Language</a>
+      <a href="prompt-library.html"      class="nav-link">Prompts</a>
+      <a href="journey-timeline.html"    class="nav-link">Timeline</a>
+      <a href="human-sprint.html"        class="nav-link">Human Sprint</a>
+      <a href="sovereignty-dashboard.html" class="nav-link">Sovereignty</a>
+      <a href="executive.html"           class="nav-link active">Executive</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+
+    <!-- Page title -->
+    <div class="page-title">
+      <h1>Executive Summary</h1>
+      <p>Two Birds Innovation — full portfolio health at a glance</p>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         LEVEL 1 — 30-Second View
+         ════════════════════════════════════════════ -->
+
+    <div class="exec-stats" aria-label="Key metrics">
+
+      <!-- Revenue -->
+      <div class="exec-card">
+        <div class="exec-card-label">Revenue</div>
+        <div class="exec-card-value clr-red">CA$0 <span style="font-size:0.85rem;font-weight:400;">MRR</span></div>
+        <div class="exec-card-sub">Target: CA$10,000/month by August</div>
+      </div>
+
+      <!-- Products -->
+      <div class="exec-card">
+        <div class="exec-card-label">Products</div>
+        <div class="product-pills">
+          <span class="product-pill pill-green">DCC <strong>43</strong></span>
+          <span class="product-pill pill-amber">Clarity <strong>38</strong></span>
+          <span class="product-pill pill-amber">TBI <strong>38</strong></span>
+          <span class="product-pill pill-red">Career Coach <strong>31</strong></span>
+          <span class="product-pill pill-amber">Aaron P <strong>34</strong></span>
+        </div>
+      </div>
+
+      <!-- Float Free Index -->
+      <div class="exec-card">
+        <div class="exec-card-label">Float Free Index</div>
+        <div class="exec-card-value clr-amber">48<span style="font-size:0.85rem;font-weight:400;">/100</span></div>
+        <div class="exec-card-sub">Target: 80</div>
+      </div>
+
+      <!-- Sprint Status -->
+      <div class="exec-card">
+        <div class="exec-card-label">Sprint Status</div>
+        <div class="exec-card-value clr-green">17/17 <span style="font-size:0.85rem;font-weight:400;">complete</span></div>
+        <div class="exec-card-sub">Queue empty</div>
+      </div>
+
+    </div>
+
+    <!-- Top 3 Human Actions -->
+    <div class="human-actions">
+      <h2>Top 3 Human Actions</h2>
+      <ol>
+        <li>
+          Post LinkedIn Post 1 — Monday April 7
+          <span class="action-time">20 min</span>
+        </li>
+        <li>
+          Call Mike K re: Paperwork Labs
+          <span class="action-time">45 min</span>
+        </li>
+        <li>
+          Send B2B emails to 3 libraries with pitch deck
+          <span class="action-time">30 min</span>
+        </li>
+      </ol>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         LEVEL 2 — 5-Minute View
+         ════════════════════════════════════════════ -->
+
+    <h2 class="section-heading">Product Scores</h2>
+
+    <div class="score-table-wrap">
+      <table class="score-table" aria-label="Product readiness scores">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Mobile</th>
+            <th>A11y</th>
+            <th>Trust</th>
+            <th>Value</th>
+            <th>Revenue</th>
+            <th>Diff</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DCC</td>
+            <td class="cell-green">8</td>
+            <td class="cell-green">9</td>
+            <td class="cell-green">7</td>
+            <td class="cell-green">8</td>
+            <td class="cell-amber">5</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-green">43</td>
+          </tr>
+          <tr>
+            <td>Clarity</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-green">7</td>
+            <td class="cell-green">7</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">38</td>
+          </tr>
+          <tr>
+            <td>TBI</td>
+            <td class="cell-green">7</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-green">7</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">38</td>
+          </tr>
+          <tr>
+            <td>Career Coach</td>
+            <td class="cell-amber">5</td>
+            <td class="cell-amber">5</td>
+            <td class="cell-amber">5</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-red">4</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-red">31</td>
+          </tr>
+          <tr>
+            <td>Aaron P</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">5</td>
+            <td class="cell-amber">5</td>
+            <td class="cell-amber">6</td>
+            <td class="cell-amber">34</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Revenue Bridge -->
+    <div class="revenue-bridge">
+      <h3>Revenue Bridge — Path to CA$10,000/month</h3>
+      <div class="bridge-chart" role="img" aria-label="Revenue projection: April $0, May $2,500, June $6,000, July $10,500, August $15,000+">
+
+        <!-- Target line -->
+        <div class="bridge-target">
+          <span class="bridge-target-label">CA$10K target</span>
+        </div>
+
+        <!-- Apr — $0 -->
+        <div class="bridge-col">
+          <div class="bridge-bar-label">$0</div>
+          <div class="bridge-bar" style="height:2px; background:var(--text-2);"></div>
+          <span class="bridge-month">Apr</span>
+        </div>
+
+        <!-- May — $2,500 (16.7% of $15K max) -->
+        <div class="bridge-col">
+          <div class="bridge-bar-label">$2.5K</div>
+          <div class="bridge-bar" style="height:16.7%; background:#d29922;"></div>
+          <span class="bridge-month">May</span>
+        </div>
+
+        <!-- Jun — $6,000 (40%) -->
+        <div class="bridge-col">
+          <div class="bridge-bar-label">$6K</div>
+          <div class="bridge-bar" style="height:40%; background:#d29922;"></div>
+          <span class="bridge-month">Jun</span>
+        </div>
+
+        <!-- Jul — $10,500 (70%) -->
+        <div class="bridge-col">
+          <div class="bridge-bar-label">$10.5K</div>
+          <div class="bridge-bar" style="height:70%; background:#3fb950;"></div>
+          <span class="bridge-month">Jul</span>
+        </div>
+
+        <!-- Aug — $15,000 (100%) -->
+        <div class="bridge-col">
+          <div class="bridge-bar-label">$15K+</div>
+          <div class="bridge-bar" style="height:100%; background:#3fb950;"></div>
+          <span class="bridge-month">Aug</span>
+        </div>
+
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-2); margin-top:0.5rem;">
+        May: first audit &middot; Jun: Paperwork Labs start + retainer &middot; Jul: 2 retainers + DCC pilot &middot; Aug: target exceeded
+      </p>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         LEVEL 3 — Deep Dive
+         ════════════════════════════════════════════ -->
+
+    <div class="deep-dive">
+
+      <details>
+        <summary>Full Product Advisor Summary</summary>
+        <div class="detail-body">
+          <p>Comprehensive product readiness assessment across all five Two Birds products, scored on mobile, accessibility, trust signals, value proposition, revenue readiness, and differentiation.</p>
+          <p><a href="research/two-birds-product-advisor.md">View full report &rarr;</a></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Grant Opportunities</summary>
+        <div class="detail-body">
+          <ul>
+            <li><strong>Ontario Trillium Foundation (OTF)</strong> — Deadline: August 19, 2026. Digital literacy and seniors' programming alignment.</li>
+            <li><strong>New Horizons for Seniors Program (NHSP)</strong> — Watch for 2026 call. Federal funding for community-based seniors' projects.</li>
+            <li><strong>Seniors Community Grant Program</strong> — Rolling intake. Provincial funding for programmes supporting older adults.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Sovereignty Status</summary>
+        <div class="detail-body">
+          <p>Current Float Free Index: <strong class="clr-amber">48/100</strong></p>
+          <p>Path to 80 requires: revenue activation, grant submission, and client pipeline build-out.</p>
+          <p><a href="sovereignty-dashboard.html">View sovereignty dashboard &rarr;</a></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Competitive Positioning</summary>
+        <div class="detail-body">
+          <p>GovTech and digital literacy competitive landscape analysis for Ontario municipalities and library systems.</p>
+          <p><a href="research/competitive-intelligence-govtech.md">View full intelligence report &rarr;</a></p>
+        </div>
+      </details>
+
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="exec-footer">
+    Two Birds Innovation | St. Thomas, Ontario | Last updated: April 5, 2026
+  </footer>
+
+</body>
+</html>
