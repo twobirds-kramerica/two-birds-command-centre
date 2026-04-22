@@ -1,6 +1,118 @@
 {
-  "lastUpdated": "2026-03-22",
+  "lastUpdated": "2026-04-22",
   "sprints": [
+    {
+      "id": "max-mode-2026-04-21",
+      "project": "hal",
+      "name": "Max-mode autonomous — 59 sprints",
+      "date": "2026-04-22",
+      "status": "complete",
+      "commits": [
+        "59 sprints / ~83 commits / 10 repos over ~25 hours",
+        "8 AUDIT.md files (9-section template) + 8 axe-core CI workflows",
+        "DCC Kids Research DB: 8 → 20 rows (Phase-1 complete)",
+        "Self-host Inter (× 2) + DM Sans + DM Serif Display + Leaflet + Fuse.js",
+        "5 new weekly external-link-check workflows; 100% SEO gap closed on non-DCC",
+        "32 retro-filed Notion Product Backlog entries (2 batches × 16, both 100% success)"
+      ],
+      "summary": "Continuous autonomous run invoked by Aaron typing 'next sprint' ~48 times + 'run max all the way until the pro plan is done'. All artefacts pushed. See logs/RETRO.md and hal-stack/context-system/exports/2026-04-21-max-mode-39-sprints.md + 2026-04-22-max-mode-continuation-sprints-48-65.md."
+    },
+    {
+      "id": "cc-csp-ready",
+      "project": "career-coach",
+      "name": "CSP-ready (inline script extraction)",
+      "date": "2026-04-22",
+      "status": "complete",
+      "commits": [
+        "refactor(js): extract inline script to js/app.js (S-KEVIN-CSP-READY pattern)"
+      ],
+      "summary": "1560-line inline <script> block extracted to js/app.js; replaced with <script src=\"js/app.js\" defer>. node --check clean. Career Coach now has zero inline JS."
+    },
+    {
+      "id": "seo-sweep",
+      "project": "hal",
+      "name": "Portfolio SEO sweep",
+      "date": "2026-04-22",
+      "status": "complete",
+      "commits": [
+        "feat(seo): add sitemap.xml + robots.txt (× 6 repos)",
+        "feat(ci): weekly external-link check (× 5 repos)",
+        "fix(seo): align Kevin robots.txt with existing noindex posture"
+      ],
+      "summary": "7 sitemaps + 6 robots.txt across all non-DCC repos. 5 new weekly link-check workflows. Kevin and Quality Dashboard correctly get Disallow:/ matching their noindex posture. Self-review caught one regression in sprint 62 and fixed it same-session."
+    },
+    {
+      "id": "cmd-a11y-schema",
+      "project": "command",
+      "name": "Command Centre a11y + JSON schema CI",
+      "date": "2026-04-22",
+      "status": "complete",
+      "commits": [
+        "feat(a11y,ci): :focus-visible + JSON schema validator workflow"
+      ],
+      "summary": "Dark-theme keyboard a11y via explicit :focus-visible. _build/check_data_schemas.py validates data/*.json on every push. All 4 existing data files pass schema check."
+    },
+    {
+      "id": "cc-portability",
+      "project": "career-coach",
+      "name": "LLM Portability Route B (S-CC-PORTABILITY)",
+      "date": "2026-04-21",
+      "status": "complete",
+      "commits": [
+        "feat: wire LLM provider picker (Anthropic / OpenAI / Gemini / Ollama)"
+      ],
+      "summary": "Career Coach now supports 4 LLM providers end-to-end. Parallel to Clarity's earlier S-CLARITY-PORTABILITY. L1 → L3/L4-capable."
+    },
+    {
+      "id": "cross-promo",
+      "project": "hal",
+      "name": "Clarity ↔ Career Coach ↔ DCC cross-promotion",
+      "date": "2026-04-21",
+      "status": "complete",
+      "commits": [
+        "feat: Clarity results page shows 'Other free tools' block",
+        "feat: Career Coach footer cross-links Clarity + DCC"
+      ],
+      "summary": "Each product becomes the other's top-of-funnel. Bilingual data-en/fr attributes on Career Coach side."
+    },
+    {
+      "id": "dcc-kids-research-phase1",
+      "project": "dcc",
+      "name": "Kids Research Database — Phase 1 coverage",
+      "date": "2026-04-21",
+      "status": "complete",
+      "commits": [
+        "feat: 12 new research rows (8 → 20; Phase-1 target met)",
+        "feat: Piaget/Erikson/Vygotsky/Kohlberg primary-source appendices"
+      ],
+      "summary": "4 ages × 5 categories coverage grid complete; three age-spanning ladders complete (Tech-Safety / Emotional-Safety / AI-literacy). Every row cites a primary publication. Needs Aaron review to advance Research → Spec."
+    },
+    {
+      "id": "audit-baseline-sweep",
+      "project": "hal",
+      "name": "Portfolio audit + a11y baseline (Tier-1 coverage)",
+      "date": "2026-04-21",
+      "status": "complete",
+      "commits": [
+        "feat: AUDIT.md + axe-core CI on 8 repos",
+        "feat: AUDIT.md.template in two-birds-project-template"
+      ],
+      "summary": "Every touchable repo (except elite-karate-site, held on client feedback) now has 9-section AUDIT.md + every-push axe-core workflow. 8 ranked top-5 next-action lists. Template ensures future projects start compliant."
+    },
+    {
+      "id": "sovereignty-hardening",
+      "project": "hal",
+      "name": "Sovereignty hardening (L1 → L3 across repos)",
+      "date": "2026-04-21",
+      "status": "complete",
+      "commits": [
+        "feat: self-host Inter on Kevin + aaron-patzalek",
+        "feat: self-host DM Sans + DM Serif Display on Career Coach",
+        "feat: self-host Leaflet on Kevin",
+        "feat: self-host Fuse.js on Command Centre"
+      ],
+      "summary": "Font + library dependencies moved from CDN → vendored. SIL OFL 1.1 + MIT licences included. Every repo touchable except elite-karate-site now L3-capable on fonts."
+    },
     {
       "id": "dcc-sprint-aeo",
       "project": "dcc",
@@ -33,7 +145,7 @@
       "project": "command",
       "name": "Command Centre v1.0",
       "date": "2026-03-22",
-      "status": "in-progress",
+      "status": "complete",
       "commits": [],
       "summary": "Initial build of Superman Table command centre dashboard."
     }

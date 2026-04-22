@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-22",
+  "lastUpdated": "2026-04-22",
   "projects": [
     {
       "id": "dcc",
@@ -10,8 +10,9 @@
       "description": "Free digital literacy platform for Ontario seniors 70+",
       "epics": [
         {"id": "dcc-mvp",     "name": "MVP Site Sprints + UI/UX Polish",                    "status": "active"},
-        {"id": "dcc-glossary","name": "Glossary Deep Expansion + Fuzzy Search",              "status": "in-progress"},
+        {"id": "dcc-glossary","name": "Glossary Deep Expansion + Fuzzy Search",              "status": "complete"},
         {"id": "dcc-aeo",    "name": "AEO Foundation (Schema, Sitemap, Robots)",             "status": "complete"},
+        {"id": "dcc-kids-research","name": "Kids Research DB (Phase 1 — 20-row coverage grid)", "status": "complete"},
         {"id": "dcc-beta",   "name": "Beta Recruitment + Launch",                            "status": "queued"},
         {"id": "dcc-parent", "name": "Set Up for Your Parent Onboarding Flow",               "status": "queued"},
         {"id": "dcc-privacy","name": "Privacy Promise Page",                                 "status": "queued"},
@@ -25,17 +26,101 @@
       ]
     },
     {
+      "id": "clarity",
+      "name": "Clarity",
+      "repo": "https://github.com/twobirds-kramerica/clarity",
+      "live": "https://twobirds-kramerica.github.io/clarity/",
+      "status": "active",
+      "description": "AI business diagnostic for Canadian SMEs — free diagnostic → CA$2,500 AI Workflow Audit.",
+      "epics": [
+        {"id": "clarity-mvp",        "name": "MVP Diagnostic + SWOT",                         "status": "complete"},
+        {"id": "clarity-portability","name": "LLM Portability Route B (4 providers)",         "status": "complete"},
+        {"id": "clarity-audit",      "name": "AUDIT.md + axe-core CI + SEO baseline",         "status": "complete"},
+        {"id": "clarity-csp",        "name": "CSP-ready (inline script → js/clarity.js)",     "status": "complete"},
+        {"id": "clarity-trust",      "name": "Portfolio-evidence line + cross-promo",         "status": "complete"},
+        {"id": "clarity-calendly",   "name": "Mailto → Calendly (needs Aaron URL)",           "status": "blocked"},
+        {"id": "clarity-pricing",    "name": "Pricing page (2-3 h)",                          "status": "queued"},
+        {"id": "clarity-email",      "name": "Email capture before Save Report",              "status": "queued"}
+      ]
+    },
+    {
+      "id": "career-coach",
+      "name": "Career Coach",
+      "repo": "https://github.com/twobirds-kramerica/career-coach",
+      "live": "https://twobirds-kramerica.github.io/career-coach/",
+      "status": "active",
+      "description": "AI job-application tool — CV-vs-posting analysis, cover letters, salary negotiation. Private by design.",
+      "epics": [
+        {"id": "cc-mvp",          "name": "MVP (CV analysis + cover letter + salary negotiation)", "status": "complete"},
+        {"id": "cc-portability",  "name": "LLM provider picker (4 providers)",                  "status": "complete"},
+        {"id": "cc-fonts",        "name": "Self-host DM Sans + DM Serif Display",               "status": "complete"},
+        {"id": "cc-audit",        "name": "AUDIT.md + axe-core CI + SEO baseline",              "status": "complete"},
+        {"id": "cc-csp",          "name": "CSP-ready (inline 1560-line script → js/app.js)",    "status": "complete"},
+        {"id": "cc-pro",          "name": "Pro tier pricing page + conversion",                 "status": "queued"},
+        {"id": "cc-email-capture","name": "Pro-launch email capture list",                     "status": "queued"}
+      ]
+    },
+    {
+      "id": "kevins-apartment",
+      "name": "Kevin's Apartment Search",
+      "repo": "https://github.com/twobirds-kramerica/kevins-apartment-search",
+      "live": "https://twobirds-kramerica.github.io/kevins-apartment-search/",
+      "status": "active",
+      "description": "Civic rental tool — curated shortlist of London ON private rentals with stale-listings CI.",
+      "epics": [
+        {"id": "kevin-mvp",         "name": "MVP listings + filters + Leaflet map",          "status": "complete"},
+        {"id": "kevin-hygiene",     "name": "Self-hosted Inter + Leaflet + CSP-ready",       "status": "complete"},
+        {"id": "kevin-audit",       "name": "AUDIT.md + axe-core CI",                        "status": "complete"},
+        {"id": "kevin-availability","name": "Listing-availability probe workflow",           "status": "complete"}
+      ]
+    },
+    {
+      "id": "aaron-patzalek",
+      "name": "Aaron Patzalek (personal brand)",
+      "repo": "https://github.com/twobirds-kramerica/aaron-patzalek",
+      "live": "https://twobirds-kramerica.github.io/aaron-patzalek/",
+      "status": "active",
+      "description": "Personal brand site — What I'm Building, career, contact.",
+      "epics": [
+        {"id": "ap-mvp",     "name": "MVP site + sovereignty (self-host Inter)",       "status": "complete"},
+        {"id": "ap-audit",   "name": "AUDIT.md + axe-core CI + SEO baseline",          "status": "complete"},
+        {"id": "ap-routing", "name": "Clarity CTA + contact-form framing",             "status": "complete"},
+        {"id": "ap-og-card", "name": "OG card + headshot (blocked on design)",         "status": "blocked"},
+        {"id": "ap-testimonial","name": "First testimonial (blocked on quote)",         "status": "blocked"}
+      ]
+    },
+    {
+      "id": "two-birds-innovation",
+      "name": "Two Birds Innovation (consulting brand)",
+      "repo": "https://github.com/twobirds-kramerica/two-birds-innovation",
+      "live": "https://twobirds-kramerica.github.io/two-birds-innovation/",
+      "status": "active",
+      "description": "Consulting brand site — CA$2,500 AI Workflow Audit + CA$4,000/mo Fractional AI Leadership for SW Ontario SMEs.",
+      "epics": [
+        {"id": "tbi-mvp",    "name": "MVP landing + services + FAQ",                   "status": "complete"},
+        {"id": "tbi-audit",  "name": "AUDIT.md + axe-core CI + SEO baseline",          "status": "complete"},
+        {"id": "tbi-trust",  "name": "Portfolio-evidence line",                         "status": "complete"},
+        {"id": "tbi-calendly","name": "Mailto → Calendly (blocked on Aaron URL)",      "status": "blocked"},
+        {"id": "tbi-linkedin","name": "LinkedIn link in contact (blocked on confirm)", "status": "blocked"},
+        {"id": "tbi-og-card","name": "OG card (blocked on design)",                    "status": "blocked"},
+        {"id": "tbi-case-study","name": "First case study / pilot walkthrough",        "status": "blocked"}
+      ]
+    },
+    {
       "id": "hal",
       "name": "HAL Stack",
-      "repo": null,
+      "repo": "https://github.com/twobirds-kramerica/two-birds-portfolio",
       "live": null,
-      "status": "deferred",
-      "description": "Voice-first AI development rig. Social Stack Diary Entry #1.",
+      "status": "active",
+      "description": "Meta-infrastructure: sprint automation, Notion sync, pattern library, persona system, sovereignty architecture.",
       "epics": [
-        {"id": "hal-voice",  "name": "Voice Transcription Workflow (Ito + KDE Connect)", "status": "deferred"},
-        {"id": "hal-preview","name": "UI Preview Layer (Lovable)",                        "status": "deferred"},
-        {"id": "hal-credits","name": "Credit Intelligence Dashboard",                     "status": "deferred"},
-        {"id": "hal-design", "name": "Component Library + vibe_rules.md",                "status": "deferred"}
+        {"id": "hal-notion-sync","name": "Notion Command Center ↔ Code sync (notion-client.py)", "status": "complete"},
+        {"id": "hal-patterns",   "name": "Autonomous-dev pattern library v1 (13 patterns)",     "status": "complete"},
+        {"id": "hal-template",   "name": "two-birds-project-template (a11y+SEO+link-check)",    "status": "complete"},
+        {"id": "hal-personas",   "name": "Founding Board (22) + Scrappy Pack (5)",              "status": "complete"},
+        {"id": "hal-voice",      "name": "Voice Transcription Workflow (Ito + KDE Connect)",    "status": "deferred"},
+        {"id": "hal-preview",    "name": "UI Preview Layer (Lovable)",                          "status": "deferred"},
+        {"id": "hal-credits",    "name": "Credit Intelligence Dashboard",                       "status": "deferred"}
       ]
     },
     {
@@ -55,14 +140,27 @@
       "id": "command",
       "name": "Superman Table — Command Centre",
       "repo": "https://github.com/twobirds-kramerica/two-birds-command-centre",
-      "live": null,
+      "live": "https://twobirds-kramerica.github.io/two-birds-command-centre/",
       "status": "active",
-      "description": "Central dashboard across all Two Birds projects.",
+      "description": "Central dashboard across all Two Birds projects. Self-hosted Fuse.js, JSON schema CI.",
       "epics": [
         {"id": "cmd-dashboard","name": "Dashboard + Search",                                    "status": "in-progress"},
+        {"id": "cmd-audit",   "name": "AUDIT.md + axe-core CI + :focus-visible + JSON schema CI","status": "complete"},
         {"id": "cmd-vault",   "name": "Artifact Vault",                                         "status": "queued"},
         {"id": "cmd-decay",   "name": "Trust Decay Monitoring",                                 "status": "queued"},
         {"id": "cmd-inbox",   "name": "Inbound Dropbox for Gemini/Grok/ChatGPT Exports",        "status": "queued"}
+      ]
+    },
+    {
+      "id": "quality-dashboard",
+      "name": "Quality Dashboard",
+      "repo": "https://github.com/twobirds-kramerica/quality-dashboard",
+      "live": null,
+      "status": "active",
+      "description": "Internal portfolio health monitor — fetches live GitHub commit freshness for all repos.",
+      "epics": [
+        {"id": "qd-mvp",       "name": "MVP PIN-gated dashboard with GitHub API fetch",     "status": "complete"},
+        {"id": "qd-audit",     "name": "AUDIT.md + axe-core CI + link-check + noindex robots","status": "complete"}
       ]
     },
     {
@@ -71,10 +169,10 @@
       "repo": null,
       "live": null,
       "status": "planned",
-      "description": "Fractional AI Leadership — 30-Day Workflow Audits and Execution Retainers for SW Ontario SMEs.",
+      "description": "Fractional AI Leadership — 30-Day Workflow Audits and Execution Retainers for SW Ontario SMEs. Shipped brand site (two-birds-innovation); offer funnel partially complete.",
       "epics": [
-        {"id": "adv-audit",   "name": "30-Day AI Workflow Audit Product ($2,500)",              "status": "planned"},
-        {"id": "adv-retainer","name": "Execution Retainer Product ($4,000/mo)",                 "status": "planned"},
+        {"id": "adv-audit",   "name": "30-Day AI Workflow Audit Product (CA$2,500)",            "status": "planned"},
+        {"id": "adv-retainer","name": "Execution Retainer Product (CA$4,000/mo)",               "status": "planned"},
         {"id": "adv-pipeline","name": "Client Pipeline + LinkedIn Outreach",                    "status": "planned"}
       ]
     },
@@ -103,8 +201,9 @@
   ],
   "infrastructure": [
     {"name": "ShareX",             "status": "to-install",     "note": "Snagit replacement — screenshot workflow"},
-    {"name": "Machine Migration",  "status": "deferred",       "note": "Evaluate 3 laptops + desktop for optimal workstation"},
+    {"name": "Machine Migration",  "status": "complete",        "note": "All 3 machines (Lenovo Pentium Silver, ThinkPad i5, EZbook) fully set up with Claude Code"},
     {"name": "Account Security",   "status": "deferred",       "note": "Three-account model + ProtonMail for vault"},
-    {"name": "Gemini Voice Workflow","status": "active-interim","note": "Current voice input. Upgrade path: Ito + KDE Connect"}
+    {"name": "Gemini Voice Workflow","status": "active-interim","note": "Current voice input. Upgrade path: Ito + KDE Connect"},
+    {"name": "Notion Command Center Sync","status": "complete","note": "notion-client.py end-to-end; 32 retro-filed entries across 2 batches"}
   ]
 }
