@@ -1,0 +1,25 @@
+name: JSON schema check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**.json"
+      - "_build/check_data_schemas.py"
+      - ".github/workflows/json-schema-check.yml"
+  pull_request:
+    paths:
+      - "data/**.json"
+      - "_build/check_data_schemas.py"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate data/*.json
+        run: python _build/check_data_schemas.py
