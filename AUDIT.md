@@ -1,6 +1,6 @@
 # Two Birds Command Centre — HAL Stack Rigor Audit
 
-> **⚠ PROGRESS UPDATE 2026-04-22** — 4 of 5 §8 Top-5 next-actions have SHIPPED; 1 remains open. Do NOT treat §8 as an untouched backlog; re-audit before proposing further TBCC work.
+> **⚠ PROGRESS UPDATE 2026-04-22** — **ALL 5** §8 Top-5 next-actions have SHIPPED. Do NOT treat §8 as an open backlog; re-audit fresh before proposing further TBCC work.
 >
 > | # | Action | Status |
 > |---|---|---|
@@ -8,7 +8,7 @@
 > | 2 | Explicit `:focus-visible` styling | **Shipped** in `22781c5` (dark-theme keyboard a11y across interactive elements) |
 > | 3 | Self-host Fuse.js | **Shipped** in `acc957c` (dropped jsdelivr CDN, matches other repos' sovereignty pattern) |
 > | 4 | JSON schema check workflow for `data/*.json` | **Shipped** in `22781c5` (same commit as #2; all 4 data files validate clean) |
-> | 5 | Per-page `<meta name="description">` | **Open** — 10-page shared-chrome first pass skipped these; trivial addition when next touched |
+> | 5 | Per-page `<meta name="description">` | **Shipped** in `fe605d8` feat(seo) — distinct description on all 10 TBCC pages (initial S-042 header wrongly listed this as open; corrected 2026-04-22 S-043) |
 
 
 
