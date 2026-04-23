@@ -1,5 +1,17 @@
 # Two Birds Command Centre — HAL Stack Rigor Audit
 
+> **⚠ PROGRESS UPDATE 2026-04-22** — 4 of 5 §8 Top-5 next-actions have SHIPPED; 1 remains open. Do NOT treat §8 as an untouched backlog; re-audit before proposing further TBCC work.
+>
+> | # | Action | Status |
+> |---|---|---|
+> | 1 | Review first axe-core CI run output | **Covered** — done within S-TBC-HYGIENE sprint (`20a166d`) |
+> | 2 | Explicit `:focus-visible` styling | **Shipped** in `22781c5` (dark-theme keyboard a11y across interactive elements) |
+> | 3 | Self-host Fuse.js | **Shipped** in `acc957c` (dropped jsdelivr CDN, matches other repos' sovereignty pattern) |
+> | 4 | JSON schema check workflow for `data/*.json` | **Shipped** in `22781c5` (same commit as #2; all 4 data files validate clean) |
+> | 5 | Per-page `<meta name="description">` | **Open** — 10-page shared-chrome first pass skipped these; trivial addition when next touched |
+
+
+
 **Audit date:** 2026-04-21
 **Auditor:** Claude Code (Opus 4.7 · max-mode autonomous)
 **Sprint:** S-TBC-HYGIENE (seventh audit-pattern pass of the day; last substantial untouched repo in the Two Birds portfolio)
